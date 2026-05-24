@@ -1240,7 +1240,7 @@ async function confirmDeleteAccount() {
 // ─── START INTERVIEW ─────────────────────────────────
 async function startInterview() {
     unlockAudio();
-}
+
   if (!document.getElementById("cq-wrap").classList.contains("hidden")) {
     const v = parseInt(document.getElementById("cq-input").value)||1;
     totalQ = Math.min(10,Math.max(1,v));
