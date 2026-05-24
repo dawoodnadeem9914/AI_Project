@@ -1433,7 +1433,7 @@ async function typewriterMsg(role, text) {
       bubble.textContent = text.slice(0,++i);
       area.scrollTop = area.scrollHeight;
       if (i>=text.length) { clearInterval(iv); r(); }
-    },20);
+    },35);
   });
 }
 
@@ -1569,7 +1569,10 @@ async function startWhisperRecording() {
     audioChunks = [];
 
     mediaRecorder.ondataavailable = (e) => {
-      if (e.data.size > 0) audioChunks.push(e.data);
+      if (e.data.size > 0) {
+        audioChunks.push(e.data);
+        document.getElementById("itz-text").textContent = "🎙 Recording your answer...";
+      }
     };
 
     mediaRecorder.onstop = async () => {
