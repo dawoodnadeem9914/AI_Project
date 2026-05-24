@@ -4,10 +4,10 @@
 ═══════════════════════════════════════════════════ */
 
 // ─── YOUR KEYS ──────────────────────────────────────
-const SUPABASE_URL   = "https://fmujwjmkjeofxytxkpvw.supabase.co";
-const SUPABASE_KEY   = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZtdWp3am1ramVvZnh5dHhrcHZ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNjk5ODAsImV4cCI6MjA5NDk0NTk4MH0.1O4U2MmQPJadmLVXg6P_vmFJG5Aipoe_sguYcos77e0";
-const OPENAI_KEY     = "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";   // 🔑 Paste your sk-... key here
-const ELEVENLABS_KEY = "sk_3c8f25a2a54336a29a139033b36babf213cc3446ce934e48";
+const SUPABASE_URL   = "paste-your-supabase-url-here";
+const SUPABASE_KEY   = "paste-your-supabase-anon-key-here";
+const OPENAI_KEY     = "paste-your-key-here";
+const ELEVENLABS_KEY = "paste-your-key-here";
 // ────────────────────────────────────────────────────
 
 const OPENAI_URL   = "https://api.openai.com/v1/chat/completions";
