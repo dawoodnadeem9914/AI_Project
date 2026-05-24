@@ -1207,10 +1207,18 @@ async function confirmDeleteAccount() {
   showConfirm("Delete account?","This will permanently delete your account and all data. This action cannot be undone.", async () => {
     showLoad("Deleting account...");
     if (SUPABASE_CONFIGURED && sb) {
-      const { error } = await sb.rpc("delete_user");
-      if (error) {
+      try {
+        const { data: { session } } = await sb.auth.getSession();
+        alert("Session: " + (session ? session.user.email : "NO SESSION"));
+        const { error } = await sb.rpc("delete_user");
+        if (error) {
+          hideLoad();
+          alert("Delete error: " + JSON.stringify(error));
+          return;
+        }
+      } catch(e) {
         hideLoad();
-        alert("Delete error: " + error.message);
+        alert("Exception: " + e.message);
         return;
       }
       await sb.auth.signOut();
