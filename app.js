@@ -3,12 +3,6 @@
    Settings | Forgot password | Voice settings | All bugs fixed
 ═══════════════════════════════════════════════════ */
 
-// ─── YOUR KEYS ──────────────────────────────────────
-const SUPABASE_URL   = "paste-your-supabase-url-here";
-const SUPABASE_KEY   = "paste-your-supabase-anon-key-here";
-const OPENAI_KEY     = "paste-your-key-here";
-const ELEVENLABS_KEY = "paste-your-key-here";
-// ────────────────────────────────────────────────────
 
 const OPENAI_URL   = "https://api.openai.com/v1/chat/completions";
 const OPENAI_MODEL = "gpt-4o-mini";
