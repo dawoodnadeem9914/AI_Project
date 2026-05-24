@@ -2091,6 +2091,11 @@ async function handleAuthCallback() {
     const params = new URLSearchParams(hash.replace(/^#/, ""));
     const type   = params.get("type");
     if (type === "recovery") {
+      const accessToken  = params.get("access_token");
+      const refreshToken = params.get("refresh_token") || "";
+      if (SUPABASE_CONFIGURED && sb && accessToken) {
+        await sb.auth.setSession({ access_token: accessToken, refresh_token: refreshToken });
+      }
       history.replaceState(null, "", window.location.pathname);
       showResetPasswordForm();
       return true;
