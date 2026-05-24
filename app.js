@@ -1364,7 +1364,7 @@ async function callClaude(sys, history, attempt=1) {
       }))
     ];
 
-    const res = await fetch(OPENAI_URL, {
+    const res = await fetch(OPENAI_URL + "/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -1753,7 +1753,7 @@ Grade: Excellent(85+)/Good(65-84)/Fair(40-64)/Needs Work(<40). answerFeedback: e
   for (let attempt=1; attempt<=3; attempt++) {
     try {
       document.getElementById("ov-load-text").textContent = attempt>1?`Retrying (${attempt}/3)...`:"Analysing your interview...";
-      const res  = await fetch(OPENAI_URL, {
+      const res  = await fetch(OPENAI_URL + "/v1/chat/completions", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
