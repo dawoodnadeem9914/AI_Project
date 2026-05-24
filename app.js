@@ -1509,66 +1509,137 @@ function getLastAIMsg() {
 
 // ─── VOICE ───────────────────────────────────────────
 function startListening() {
-  if (!("webkitSpeechRecognition" in window) && !("SpeechRecognition" in window)) {
-    addErrMsg("Voice recognition needs Chrome or Microsoft Edge. Please switch browser.");
-    return;
-  }
-
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  recognition = new SR();
-  recognition.continuous=true; recognition.interimResults=true; recognition.lang="en-US";
-
-  isListening=true; liveTranscript="";
+  isListening = true;
+  liveTranscript = "";
   setMicState(true); setSkipState(true);
   document.getElementById("iv-mic-btn").classList.add("on");
   document.getElementById("mic-r1").classList.add("pulse");
   document.getElementById("mic-r2").classList.add("pulse");
   document.getElementById("itz-dot").classList.add("live");
-  document.getElementById("itz-hint").textContent="Listening — 3 sec silence auto-submits";
+  document.getElementById("itz-hint").textContent = "Listening — tap mic to submit";
+  document.getElementById("itz-text").innerHTML =
+    `<span class="itz-placeholder">Speak your answer — recording...</span>`;
 
-  recognition.onresult = (e) => {
-    if (isPaused||interviewDone) return;
-    let final="", interim="";
-    for (let i=e.resultIndex;i<e.results.length;i++) {
-      const t=e.results[i][0].transcript;
-      if (e.results[i].isFinal) final+=t+" "; else interim+=t;
-    }
-    liveTranscript=(liveTranscript+final).trim();
-    const disp=liveTranscript+(interim?" "+interim:"");
-    if (disp.trim()) document.getElementById("itz-text").textContent=disp;
-    updateStats(liveTranscript+" "+interim);
-
-    const tw=(liveTranscript+" "+interim).trim().split(/\s+/).filter(w=>w).length;
-    if (tw>=4) {
-      clearTimeout(silenceTimer);
-      silenceTimer=setTimeout(()=>{ if(isListening&&!interviewDone&&!isPaused) manualSubmit(); }, appSettings.silence);
-    }
-  };
-
-  recognition.onerror=(e)=>{ if(!["no-speech","aborted"].includes(e.error)) console.error(e.error); };
-  recognition.onend=()=>{ if(isListening&&!interviewDone) { try{recognition.start();}catch(e){} } };
-  recognition.start();
+  startWhisperRecording();
 }
 
 function stopListening() {
-  isListening=false; clearTimeout(silenceTimer);
-  if (recognition) { try{recognition.stop();}catch(e){} }
+  isListening = false;
+  clearTimeout(silenceTimer);
+  stopWhisperRecording();
   document.getElementById("iv-mic-btn").classList.remove("on");
   document.getElementById("mic-r1").classList.remove("pulse");
   document.getElementById("mic-r2").classList.remove("pulse");
   document.getElementById("itz-dot").classList.remove("live");
-  document.getElementById("itz-hint").textContent="Processing...";
+  document.getElementById("itz-hint").textContent = "Processing...";
   setMicState(false); setSkipState(false);
 }
 
 function manualSubmit() {
-  if (!liveTranscript.trim()||interviewDone) return;
-  const ans=liveTranscript.trim(); stopListening(); handleAnswer(ans);
+  if (interviewDone) return;
+  stopListening();
+  if (liveTranscript.trim()) {
+    handleAnswer(liveTranscript.trim());
+  }
 }
 
 function skipQ() {
   const ans=liveTranscript.trim()||"(No answer — skipped)";
   stopListening(); handleAnswer(ans);
+}
+
+let mediaRecorder = null;
+let audioChunks = [];
+let recordingStream = null;
+
+async function startWhisperRecording() {
+  try {
+    recordingStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const mimeType = MediaRecorder.isTypeSupported("audio/webm")
+      ? "audio/webm"
+      : MediaRecorder.isTypeSupported("audio/mp4")
+      ? "audio/mp4"
+      : "audio/ogg";
+
+    mediaRecorder = new MediaRecorder(recordingStream, { mimeType });
+    audioChunks = [];
+
+    mediaRecorder.ondataavailable = (e) => {
+      if (e.data.size > 0) audioChunks.push(e.data);
+    };
+
+    mediaRecorder.onstop = async () => {
+      if (!isListening && audioChunks.length > 0) {
+        await transcribeWithWhisper();
+      }
+    };
+
+    mediaRecorder.start(250);
+
+    silenceTimer = setTimeout(() => {
+      if (isListening && !interviewDone && !isPaused) {
+        manualSubmit();
+      }
+    }, appSettings.silence + 5000);
+
+  } catch (e) {
+    addErrMsg("Microphone access denied. Please allow mic access in your browser settings.");
+    stopListening();
+  }
+}
+
+function stopWhisperRecording() {
+  if (mediaRecorder && mediaRecorder.state !== "inactive") {
+    mediaRecorder.stop();
+  }
+  if (recordingStream) {
+    recordingStream.getTracks().forEach(t => t.stop());
+    recordingStream = null;
+  }
+}
+
+async function transcribeWithWhisper() {
+  if (audioChunks.length === 0) return;
+
+  document.getElementById("itz-hint").textContent = "Transcribing...";
+
+  const mimeType = audioChunks[0].type || "audio/webm";
+  const ext = mimeType.includes("mp4") ? "mp4"
+    : mimeType.includes("ogg") ? "ogg" : "webm";
+
+  const blob = new Blob(audioChunks, { type: mimeType });
+  audioChunks = [];
+
+  if (blob.size < 1000) {
+    handleAnswer("(No answer — skipped)");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("file", blob, `audio.${ext}`);
+  formData.append("model", "whisper-1");
+  formData.append("language", "en");
+
+  try {
+    const res = await fetch(OPENAI_URL + "/v1/audio/transcriptions", {
+      method: "POST",
+      headers: { "Authorization": "Bearer " + OPENAI_KEY },
+      body: formData,
+    });
+
+    const data = await res.json();
+
+    if (data.text && data.text.trim().length > 0) {
+      liveTranscript = data.text.trim();
+      document.getElementById("itz-text").textContent = liveTranscript;
+      handleAnswer(liveTranscript);
+    } else {
+      handleAnswer("(No answer — skipped)");
+    }
+  } catch (e) {
+    addErrMsg("Transcription failed. Please try again.");
+    handleAnswer("(No answer — skipped)");
+  }
 }
 
 // ─── PAUSE ───────────────────────────────────────────
