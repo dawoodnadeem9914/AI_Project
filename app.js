@@ -1249,6 +1249,7 @@ async function startInterview() {
   setSbStatus("thinking","Connecting...");
   showPage("page-interview");
   await sleep(300);
+  await unlockAudioForIOS();
   await beginInterview();
 }
 
@@ -2329,4 +2330,59 @@ function removeAvatar() {
     swAv.textContent = name[0].toUpperCase();
     swAv.querySelectorAll("img").forEach(i => i.remove());
   }
+
+  async function unlockAudioForIOS() {
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+    if (!isIOS && !isSafari) return;
+
+    return new Promise(resolve => {
+      const overlay = document.createElement('div');
+      overlay.style.cssText = `
+        position:fixed;inset:0;z-index:99999;
+        background:rgba(10,4,7,0.96);
+        display:flex;flex-direction:column;
+        align-items:center;justify-content:center;gap:20px;
+      `;
+      overlay.innerHTML = `
+        <div style="font-size:52px">🎙️</div>
+        <p style="color:#fdf0ea;font-size:20px;font-weight:700;text-align:center;padding:0 24px;margin:0">
+          Tap to enable voice
+        </p>
+        <p style="color:rgba(253,240,234,.5);font-size:14px;text-align:center;padding:0 32px;margin:0;line-height:1.6">
+          Safari requires a tap to activate the microphone and audio
+        </p>
+        <button id="ios-unlock-btn" style="
+          padding:16px 44px;
+          background:linear-gradient(135deg,#8b1228,#c0243f);
+          color:white;border:none;border-radius:12px;
+          font-size:17px;font-weight:700;
+          font-family:inherit;cursor:pointer;
+          box-shadow:0 4px 20px rgba(192,36,63,.5);
+        ">Start Interview</button>
+      `;
+      document.body.appendChild(overlay);
+
+      document.getElementById('ios-unlock-btn').addEventListener('click', () => {
+        try {
+          const ctx = new (window.AudioContext || window.webkitAudioContext)();
+          const buf = ctx.createBuffer(1, 1, 22050);
+          const src = ctx.createBufferSource();
+          src.buffer = buf;
+          src.connect(ctx.destination);
+          src.start(0);
+          setTimeout(() => ctx.close(), 100);
+        } catch(e) {}
+
+        try {
+          const utt = new SpeechSynthesisUtterance('');
+          window.speechSynthesis.speak(utt);
+        } catch(e) {}
+
+        overlay.remove();
+        resolve();
+      }, { once: true });
+    });
+  }
+
 }
