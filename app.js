@@ -1264,7 +1264,8 @@ async function beginInterview() {
   removeTyping();
   setSbStatus("speaking","AI is speaking");
   setPauseState(true);
-  await Promise.all([typewriterMsg("ai", reply), speakText(reply)]);
+  speakText(reply);
+  await typewriterMsg("ai", reply);
   setPauseState(false);
   if (!interviewDone) { setSbStatus("listening","Listening..."); startListening(); }
 }
@@ -1322,7 +1323,8 @@ async function handleAnswer(answer) {
   removeTyping();
   setSbStatus("speaking","AI is speaking");
   setPauseState(true);
-  await Promise.all([typewriterMsg("ai", reply), speakText(reply)]);
+  speakText(reply);
+  await typewriterMsg("ai", reply);
   setPauseState(false);
   if (!interviewDone) { setSbStatus("listening","Listening..."); startListening(); }
 }
@@ -2400,6 +2402,7 @@ function removeAvatar() {
     const name = currentUser?.user_metadata?.full_name || currentUser?.email?.split("@")[0] || "User";
     swAv.textContent = name[0].toUpperCase();
     swAv.querySelectorAll("img").forEach(i => i.remove());
+    }
   }
 
   async function unlockAudioForIOS() {
@@ -2456,4 +2459,3 @@ function removeAvatar() {
     });
   }
 
-}
