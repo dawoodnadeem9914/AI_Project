@@ -361,6 +361,9 @@ async function handleLogin() {
   } else {
     upsertSavedAccount(data.user, null);
   }
+  localStorage.removeItem("iai-avatar");
+  const _acc = getSavedAccounts().find(a => a.id === data.user.id);
+  if (_acc?.avatar) localStorage.setItem("iai-avatar", _acc.avatar);
   initDashboard();
 }
 
