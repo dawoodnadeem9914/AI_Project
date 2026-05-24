@@ -4,7 +4,7 @@
 ═══════════════════════════════════════════════════ */
 
 
-const OPENAI_URL   = "https://api.openai.com/v1/chat/completions";
+const OPENAI_URL   = "https://interview-ai-proxy.captaindawood14.workers.dev";
 const OPENAI_MODEL = "gpt-4o-mini";
 
 // ─── SETTINGS STATE ──────────────────────────────────
