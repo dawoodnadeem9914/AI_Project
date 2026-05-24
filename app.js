@@ -1213,6 +1213,8 @@ async function confirmDeleteAccount() {
       await sb.auth.signOut();
     }
     try { localStorage.removeItem(getSessionsKey()); } catch(e) {}
+    try { localStorage.removeItem("iai-avatar"); } catch(e) {}
+    try { removeFromSavedAccounts(currentUser?.id); } catch(e) {}
     hideLoad();
     currentUser = null;
     showPage("page-auth");
