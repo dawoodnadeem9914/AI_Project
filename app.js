@@ -1203,13 +1203,16 @@ function clearHistory() {
   });
 }
 
-function confirmDeleteAccount() {
+async function confirmDeleteAccount() {
   showConfirm("Delete account?","This will permanently delete your account and all data. This action cannot be undone.", async () => {
     showLoad("Deleting account...");
     if (SUPABASE_CONFIGURED && sb) {
-      await sb.auth.admin?.deleteUser(currentUser?.id).catch(()=>{});
+      try {
+        await sb.rpc("delete_user");
+      } catch(e) {}
       await sb.auth.signOut();
     }
+    try { localStorage.removeItem(getSessionsKey()); } catch(e) {}
     hideLoad();
     currentUser = null;
     showPage("page-auth");
