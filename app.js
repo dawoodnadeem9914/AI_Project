@@ -1226,6 +1226,8 @@ async function confirmDeleteAccount() {
 
 // ─── START INTERVIEW ─────────────────────────────────
 async function startInterview() {
+    unlockAudio();
+}
   if (!document.getElementById("cq-wrap").classList.contains("hidden")) {
     const v = parseInt(document.getElementById("cq-input").value)||1;
     totalQ = Math.min(10,Math.max(1,v));
@@ -1393,6 +1395,18 @@ async function callClaude(sys, history, attempt=1) {
 
 const callGemini = callClaude;
 
+let audioUnlocked = false;
+function unlockAudio() {
+  if (audioUnlocked) return;
+  audioUnlocked = true;
+  const ctx = new (window.AudioContext || window.webkitAudioContext)();
+  ctx.resume();
+  const buf = ctx.createBuffer(1, 1, 22050);
+  const src = ctx.createBufferSource();
+  src.buffer = buf;
+  src.connect(ctx.destination);
+  src.start(0);
+}
 // ─── TYPEWRITER ──────────────────────────────────────
 async function typewriterMsg(role, text) {
   if (interviewDone && role==="ai") return;
