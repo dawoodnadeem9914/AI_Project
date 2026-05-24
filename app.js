@@ -1676,18 +1676,28 @@ async function speakText(text) {
 }
 
 function browserSpeak(text) {
-  return new Promise(r=>{
-    if (!window.speechSynthesis){r();return;}
+  return new Promise(r => {
+    if (!window.speechSynthesis) { r(); return; }
     window.speechSynthesis.cancel();
-    currentUtt=new SpeechSynthesisUtterance(text);
-    currentUtt.rate=appSettings.speed;
-    const cfg = VOICE_BROWSER_MAP[appSettings.voice] || { gender:"male", pitch:0.85, rate:1.0 };
-    currentUtt.pitch = cfg.pitch;
-    currentUtt.rate = appSettings.speed * (cfg.rate || 1.0);
-    const pick = getBrowserVoice(cfg.gender);
-    if (pick) currentUtt.voice = pick;
-    currentUtt.onend=currentUtt.onerror=()=>{currentUtt=null;r();};
-    window.speechSynthesis.speak(currentUtt);
+
+    const speak = () => {
+      currentUtt = new SpeechSynthesisUtterance(text);
+      const cfg = VOICE_BROWSER_MAP[appSettings.voice] || { gender:"male", pitch:0.85, rate:1.0 };
+      currentUtt.pitch = cfg.pitch;
+      currentUtt.rate = appSettings.speed * (cfg.rate || 1.0);
+      const pick = getBrowserVoice(cfg.gender);
+      if (pick) currentUtt.voice = pick;
+      currentUtt.onend = currentUtt.onerror = () => { currentUtt = null; r(); };
+      window.speechSynthesis.speak(currentUtt);
+    };
+
+    const voices = window.speechSynthesis.getVoices();
+    if (voices.length) {
+      speak();
+    } else {
+      window.speechSynthesis.onvoiceschanged = () => { speak(); };
+      setTimeout(speak, 400);
+    }
   });
 }
 
