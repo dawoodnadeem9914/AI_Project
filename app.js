@@ -412,7 +412,7 @@ async function handleForgotPassword() {
 
   let error;
   if (SUPABASE_CONFIGURED && sb) {
-    const redirectUrl = window.location.href.split("#")[0].split("?")[0];
+    const redirectUrl = "https://dawoodnadeem9914.github.io/AI_Project";
     const res = await sb.auth.resetPasswordForEmail(email, { redirectTo: redirectUrl });
     error = res.error;
   } else {
