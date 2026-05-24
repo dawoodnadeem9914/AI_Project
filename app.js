@@ -1208,19 +1208,8 @@ async function confirmDeleteAccount() {
     showLoad("Deleting account...");
     if (SUPABASE_CONFIGURED && sb) {
       try {
-        const { data: { session } } = await sb.auth.getSession();
-        alert("Session: " + (session ? session.user.email : "NO SESSION"));
-        const { error } = await sb.rpc("delete_user");
-        if (error) {
-          hideLoad();
-          alert("Delete error: " + JSON.stringify(error));
-          return;
-        }
-      } catch(e) {
-        hideLoad();
-        alert("Exception: " + e.message);
-        return;
-      }
+        await sb.rpc("delete_user");
+      } catch(e) {}
       await sb.auth.signOut();
     }
     try { localStorage.removeItem(getSessionsKey()); } catch(e) {}
