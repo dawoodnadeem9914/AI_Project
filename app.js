@@ -7,6 +7,19 @@
 const OPENAI_URL   = "https://interview-ai-proxy.captaindawood14.workers.dev";
 const OPENAI_MODEL = "gpt-4o-mini";
 
+let audioUnlocked = false;
+function unlockAudio() {
+  if (audioUnlocked) return;
+  audioUnlocked = true;
+  const ctx = new (window.AudioContext || window.webkitAudioContext)();
+  ctx.resume();
+  const buf = ctx.createBuffer(1, 1, 22050);
+  const src = ctx.createBufferSource();
+  src.buffer = buf;
+  src.connect(ctx.destination);
+  src.start(0);
+}
+
 // ─── SETTINGS STATE ──────────────────────────────────
 let appSettings = {
   voice:    "pNInz6obpgDQGcFmaJgB",
@@ -1395,18 +1408,6 @@ async function callClaude(sys, history, attempt=1) {
 
 const callGemini = callClaude;
 
-let audioUnlocked = false;
-function unlockAudio() {
-  if (audioUnlocked) return;
-  audioUnlocked = true;
-  const ctx = new (window.AudioContext || window.webkitAudioContext)();
-  ctx.resume();
-  const buf = ctx.createBuffer(1, 1, 22050);
-  const src = ctx.createBufferSource();
-  src.buffer = buf;
-  src.connect(ctx.destination);
-  src.start(0);
-}
 // ─── TYPEWRITER ──────────────────────────────────────
 async function typewriterMsg(role, text) {
   if (interviewDone && role==="ai") return;
