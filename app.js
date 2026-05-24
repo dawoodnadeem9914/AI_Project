@@ -1207,9 +1207,12 @@ async function confirmDeleteAccount() {
   showConfirm("Delete account?","This will permanently delete your account and all data. This action cannot be undone.", async () => {
     showLoad("Deleting account...");
     if (SUPABASE_CONFIGURED && sb) {
-      try {
-        await sb.rpc("delete_user");
-      } catch(e) {}
+      const { error } = await sb.rpc("delete_user");
+      if (error) {
+        hideLoad();
+        alert("Delete error: " + error.message);
+        return;
+      }
       await sb.auth.signOut();
     }
     try { localStorage.removeItem(getSessionsKey()); } catch(e) {}
