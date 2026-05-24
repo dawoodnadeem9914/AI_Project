@@ -1264,9 +1264,10 @@ async function beginInterview() {
   removeTyping();
   setSbStatus("speaking","AI is speaking");
   setPauseState(true);
-  speakText(reply);
+  await speakText(reply);
   await typewriterMsg("ai", reply);
   setPauseState(false);
+  await sleep(600);
   if (!interviewDone) { setSbStatus("listening","Listening..."); startListening(); }
 }
 
@@ -1323,9 +1324,10 @@ async function handleAnswer(answer) {
   removeTyping();
   setSbStatus("speaking","AI is speaking");
   setPauseState(true);
-  speakText(reply);
+  await speakText(reply);
   await typewriterMsg("ai", reply);
   setPauseState(false);
+  await sleep(600);
   if (!interviewDone) { setSbStatus("listening","Listening..."); startListening(); }
 }
 
