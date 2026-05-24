@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>InterviewAI — Ace Your Career</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<!-- ══════════ AUTH PAGE ══════════ -->
+<div id="page-auth" class="page active">
+  <div class="auth-atmosphere">
+    <div class="atm-glow g1"></div>
+    <div class="atm-glow g2"></div>
+    <div class="atm-glow g3"></div>
+    <div class="atm-grid"></div>
+  </div>
+  <div class="auth-particles">
+    <div class="auth-particle"></div>
+    <div class="auth-particle"></div>
+    <div class="auth-particle"></div>
+    <div class="auth-particle"></div>
+    <div class="auth-particle"></div>
+    <div class="auth-particle"></div>
+    <div class="auth-particle"></div>
+    <div class="auth-particle"></div>
+  </div>
+  <div class="auth-scanline"></div>
+  <div class="auth-corner-fx"></div>
+  <div class="auth-topbar">
+    <div class="auth-topbar-logo">
+      <div class="atb-icon">
+        <svg width="20" height="20" viewBox="0 0 44 44" fill="none">
+          <rect x="4" y="2" width="36" height="28" rx="7" fill="white"/>
+          <rect x="13" y="10" width="5" height="10" rx="2.5" fill="#c0243f"/>
+          <rect x="26" y="10" width="5" height="10" rx="2.5" fill="#c0243f"/>
+          <path d="M10 30 L7 42 L22 30" fill="white"/>
+        </svg>
+      </div>
+      <div class="atb-text">
+        <span class="atb-name">Ai Coach</span>
+        <span class="atb-int">INTERVIEW</span>
+      </div>
+    </div>
+    <button class="atb-theme" style="display:none;"><span id="theme-icon">🌙</span></button>
+  </div>
+
+  <div class="auth-body">
+    <!-- LEFT -->
+    <div class="auth-brand-side">
+      <div class="abs-content">
+        <div class="abs-badge">AI-Powered · CCS3600 · UPM</div>
+        <h1 class="abs-headline">Practice smarter.<br/><em>Get hired faster.</em></h1>
+        <p class="abs-desc">Your AI interviewer listens to your voice, tracks your progress, and gives you a detailed score after every session.</p>
+
+        <div class="abs-report-card">
+          <div class="arc-header">
+            <div>
+              <p class="arc-title">Session Report</p>
+              <p class="arc-sub">Technology · Internship · 5 Questions</p>
+            </div>
+            <div class="arc-badge-done">Completed</div>
+          </div>
+          <div class="arc-body">
+            <div class="arc-ring-wrap">
+              <svg width="108" height="108" viewBox="0 0 108 108">
+                <circle cx="54" cy="54" r="44" fill="none" stroke="rgba(192,36,63,0.1)" stroke-width="8"/>
+                <circle cx="54" cy="54" r="44" fill="none" stroke="url(#rgrad)" stroke-width="8"
+                        stroke-dasharray="276.5" stroke-dashoffset="41.5"
+                        stroke-linecap="round" transform="rotate(-90 54 54)"/>
+                <defs>
+                  <linearGradient id="rgrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#8b1228"/>
+                    <stop offset="100%" style="stop-color:#e03050"/>
+                  </linearGradient>
+                </defs>
+              </svg>
+              <div class="arc-ring-center">
+                <span class="arc-score-n">85</span>
+                <span class="arc-score-d">/100</span>
+                <span class="arc-grade">Good</span>
+              </div>
+            </div>
+            <div class="arc-bars">
+              <div class="arc-bar-row"><span>Communication</span><div class="arc-bar-track"><div class="arc-bar-fill" style="width:82%"></div></div><span class="arc-bar-val">82</span></div>
+              <div class="arc-bar-row"><span>Content Quality</span><div class="arc-bar-track"><div class="arc-bar-fill" style="width:88%"></div></div><span class="arc-bar-val">88</span></div>
+              <div class="arc-bar-row"><span>Confidence</span><div class="arc-bar-track"><div class="arc-bar-fill" style="width:79%"></div></div><span class="arc-bar-val">79</span></div>
+              <div class="arc-bar-row"><span>Fluency</span><div class="arc-bar-track"><div class="arc-bar-fill arc-bar-green" style="width:91%"></div></div><span class="arc-bar-val">91</span></div>
+            </div>
+          </div>
+          <div class="arc-stats">
+            <div class="arc-stat"><span class="arc-sn green">142</span><span class="arc-sl">Words</span></div>
+            <div class="arc-stat"><span class="arc-sn red">2</span><span class="arc-sl">Fillers</span></div>
+            <div class="arc-stat"><span class="arc-sn amber">5/5</span><span class="arc-sl">Questions</span></div>
+            <div class="arc-stat"><span class="arc-sn">+12</span><span class="arc-sl">Improved</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="auth-card-side">
+      <div class="auth-card">
+        <div class="ac-tabs" id="auth-tabs">
+          <button class="ac-tab active" id="tab-login" onclick="switchToTab('login')">Sign In</button>
+          <button class="ac-tab" id="tab-register" onclick="switchToTab('register')">Create Account</button>
+        </div>
+
+        <!-- LOGIN -->
+        <div class="ac-form" id="form-login">
+          <div class="ac-head"><h2>Welcome back</h2><p>Sign in to continue your practice</p></div>
+          <div class="af-alert hidden" id="login-alert"></div>
+          <div class="ac-field">
+            <label>Email address</label>
+            <input type="email" id="login-email" placeholder="you@email.com" onkeydown="if(event.key==='Enter')handleLogin()"/>
+          </div>
+          <div class="ac-field">
+            <label>Password</label>
+            <div class="af-pass-wrap">
+              <input type="password" id="login-pass" placeholder="Your password" onkeydown="if(event.key==='Enter')handleLogin()"/>
+              <button class="af-eye" onclick="toggleEye('login-pass',this)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+            </div>
+            <div class="ac-forgot"><button onclick="showForgotPassword()">Forgot password?</button></div>
+          </div>
+          <button class="ac-btn" id="login-btn" onclick="handleLogin()">
+            <span id="login-btn-txt">Sign In</span>
+            <div class="af-spin hidden" id="login-spin"></div>
+          </button>
+        </div>
+
+        <!-- REGISTER -->
+        <div class="ac-form ap-hidden" id="form-register">
+          <div class="ac-head"><h2>Create account</h2><p>Start practising today, completely free</p></div>
+          <div class="af-alert hidden" id="reg-alert"></div>
+          <div class="ac-field">
+            <label>Full name</label>
+            <input type="text" id="reg-name" placeholder="Your full name"/>
+          </div>
+          <div class="ac-field">
+            <label>Email address</label>
+            <input type="email" id="reg-email" placeholder="you@email.com"/>
+          </div>
+          <div class="ac-field">
+            <label>Password</label>
+            <div class="af-pass-wrap">
+              <input type="password" id="reg-pass" placeholder="Create a strong password" oninput="checkPw(this.value)"/>
+              <button class="af-eye" onclick="toggleEye('reg-pass',this)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+            </div>
+            <div class="pw-strength-bar"><div id="pw-bar" class="pw-bar-fill"></div></div>
+            <div class="pw-reqs">
+              <div class="pw-req" id="pr-len"><div class="pw-circle"></div>8 characters or more</div>
+              <div class="pw-req" id="pr-upper"><div class="pw-circle"></div>Uppercase letter (A-Z)</div>
+              <div class="pw-req" id="pr-lower"><div class="pw-circle"></div>Lowercase letter (a-z)</div>
+              <div class="pw-req" id="pr-num"><div class="pw-circle"></div>Number (0-9)</div>
+              <div class="pw-req" id="pr-sym"><div class="pw-circle"></div>Special character (!@#$%)</div>
+            </div>
+          </div>
+          <div class="ac-field">
+            <label>Confirm password</label>
+            <div class="af-pass-wrap">
+              <input type="password" id="reg-confirm" placeholder="Repeat your password"/>
+              <button class="af-eye" onclick="toggleEye('reg-confirm',this)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+            </div>
+          </div>
+          <button class="ac-btn" id="reg-btn" onclick="handleRegister()">
+            <span id="reg-btn-txt">Create Account</span>
+            <div class="af-spin hidden" id="reg-spin"></div>
+          </button>
+        </div>
+
+        <!-- FORGOT -->
+        <div class="ac-form ap-hidden" id="form-forgot">
+          <button class="ac-back" onclick="showSignIn()">← Back to sign in</button>
+          <div class="ac-head"><h2>Reset password</h2><p>Enter your email and we'll send a secure link</p></div>
+          <div class="af-alert hidden" id="forgot-alert"></div>
+          <div class="ac-field">
+            <label>Email address</label>
+            <input type="email" id="forgot-email" placeholder="you@email.com"/>
+          </div>
+          <button class="ac-btn" id="forgot-btn" onclick="handleForgotPassword()">
+            <span id="forgot-btn-txt">Send Reset Link</span>
+            <div class="af-spin hidden" id="forgot-spin"></div>
+          </button>
+        </div>
+
+        <!-- RESET -->
+        <div class="ac-form ap-hidden" id="form-reset">
+          <div class="ac-head"><div style="font-size:28px;margin-bottom:8px">🔐</div><h2>Set new password</h2><p>Choose a strong password to continue</p></div>
+          <div class="af-alert hidden" id="reset-alert"></div>
+          <div class="ac-field">
+            <label>New password</label>
+            <div class="af-pass-wrap">
+              <input type="password" id="reset-pass" placeholder="New password" oninput="checkPw(this.value)"/>
+              <button class="af-eye" onclick="toggleEye('reset-pass',this)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+            </div>
+            <div class="pw-strength-bar"><div id="pw-bar2" class="pw-bar-fill"></div></div>
+          </div>
+          <div class="ac-field">
+            <label>Confirm new password</label>
+            <div class="af-pass-wrap">
+              <input type="password" id="reset-confirm" placeholder="Repeat password"/>
+              <button class="af-eye" onclick="toggleEye('reset-confirm',this)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+            </div>
+          </div>
+          <button class="ac-btn" id="reset-btn" onclick="handlePasswordReset()">
+            <span id="reset-btn-txt">Set New Password</span>
+            <div class="af-spin hidden" id="reset-spin"></div>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <div class="auth-bottombar">© 2026 Ai Coach Interview · CCS3600 Project · UPM</div>
+</div>
+
+<!-- ══════════ DASHBOARD ══════════ -->
+<div id="page-dashboard" class="page">
+  <div class="dash-orbs">
+    <div class="dash-orb do1"></div>
+    <div class="dash-orb do2"></div>
+    <div class="dash-orb do3"></div>
+  </div>
+
+  <!-- Premium Nav -->
+  <nav class="nav prem-nav" id="main-nav">
+    <div class="nav-l">
+      <div class="prem-logo">
+        <div class="prem-logo-icon">
+          <svg width="18" height="18" viewBox="0 0 44 44" fill="none">
+            <rect x="4" y="2" width="36" height="28" rx="7" fill="white"/>
+            <rect x="13" y="10" width="5" height="10" rx="2.5" fill="#c0243f"/>
+            <rect x="26" y="10" width="5" height="10" rx="2.5" fill="#c0243f"/>
+            <path d="M10 30 L6 40 L22 30" fill="white"/>
+          </svg>
+        </div>
+        <div>
+          <span class="prem-logo-name">Ai Coach</span>
+          <span class="prem-logo-sub">INTERVIEW</span>
+        </div>
+      </div>
+    </div>
+    <div class="prem-nav-links">
+      <button class="pnl-btn active" onclick="showDashHome()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </button>
+      <button class="pnl-btn" onclick="goToSessions()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        My Sessions
+      </button>
+    </div>
+    <div class="nav-r">
+      <button class="nav-icon-btn" onclick="toggleTheme()" title="Toggle theme">
+        <span id="nav-theme-icon">🌙</span>
+      </button>
+      <button class="nav-icon-btn" onclick="goToSettings()" title="Settings">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      </button>
+      <div class="prem-user" onclick="goToSettings()">
+        <div class="nav-av" id="nav-av" onclick="openAvatarChange(event)" style="cursor:pointer" title="Change profile photo">D</div>
+        <div class="prem-user-info">
+          <span id="nav-name" class="prem-user-name">User</span>
+        </div>
+      </div>
+      <button class="nav-logout-btn" onclick="handleLogout()">Sign Out</button>
+    </div>
+  </nav>
+
+  <!-- ── DASHBOARD HOME VIEW ── -->
+  <div id="dash-home-view">
+    <div class="dash-wrap">
+
+      <!-- Premium Hero -->
+      <div class="prem-hero">
+        <div class="prem-hero-bg"></div>
+        <div class="prem-hero-content">
+          <div class="prem-hero-left">
+            <div class="prem-greet-row">
+              <div class="prem-greet-dot"></div>
+              <span id="dhb-greet" class="prem-greet-txt">Good morning</span>
+            </div>
+            <h1 class="prem-hero-title">Ready to <em>ace</em><br/>your next interview?</h1>
+            <p class="prem-hero-sub">Configure your session, start the AI interview, and receive a personalised performance report.</p>
+            <div class="prem-hero-actions">
+              <button class="prem-cta-btn" onclick="document.getElementById('config-section').scrollIntoView({behavior:'smooth'})">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                Start Interview
+              </button>
+              <button class="prem-ghost-btn" onclick="goToSessions()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                View Progress
+              </button>
+            </div>
+          </div>
+          <div class="prem-hero-stats">
+            <div class="prem-stat-card">
+              <div class="psc-icon">📊</div>
+              <div class="psc-val" id="st-total">0</div>
+              <div class="psc-label">Total Sessions</div>
+              <div class="psc-bar"><div class="psc-bar-fill" id="psc-bar-total"></div></div>
+            </div>
+            <div class="prem-stat-card">
+              <div class="psc-icon">🏆</div>
+              <div class="psc-val" id="st-best">—</div>
+              <div class="psc-label">Best Score</div>
+              <div class="psc-bar"><div class="psc-bar-fill psc-gold" id="psc-bar-best"></div></div>
+            </div>
+            <div class="prem-stat-card">
+              <div class="psc-icon">📈</div>
+              <div class="psc-val" id="st-avg">—</div>
+              <div class="psc-label">Average Score</div>
+              <div class="psc-bar"><div class="psc-bar-fill psc-green" id="psc-bar-avg"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Config Section -->
+      <div id="config-section" class="prem-config-section">
+        <!-- Industry -->
+        <div class="prem-section-label">
+          <span class="psl-num">01</span>
+          <div>
+            <h2 class="psl-title">Select Industry</h2>
+            <p class="psl-sub">Choose the field you are interviewing for</p>
+          </div>
+        </div>
+        <div class="prem-ind-grid">
+          <div class="prem-ind-tile selected" data-v="tech" onclick="selInd(this)">
+            <div class="pit-glow"></div>
+            <div class="pit-icon">💻</div>
+            <div class="pit-info">
+              <p class="pit-name">Technology</p>
+              <p class="pit-sub">Software · IT · Data</p>
+            </div>
+            <div class="pit-check">✓</div>
+          </div>
+          <div class="prem-ind-tile" data-v="banking" onclick="selInd(this)">
+            <div class="pit-glow"></div>
+            <div class="pit-icon">🏦</div>
+            <div class="pit-info">
+              <p class="pit-name">Banking & Finance</p>
+              <p class="pit-sub">Finance · Accounting</p>
+            </div>
+            <div class="pit-check">✓</div>
+          </div>
+          <div class="prem-ind-tile" data-v="healthcare" onclick="selInd(this)">
+            <div class="pit-glow"></div>
+            <div class="pit-icon">🏥</div>
+            <div class="pit-info">
+              <p class="pit-name">Healthcare</p>
+              <p class="pit-sub">Medical · Nursing</p>
+            </div>
+            <div class="pit-check">✓</div>
+          </div>
+          <div class="prem-ind-tile" data-v="education" onclick="selInd(this)">
+            <div class="pit-glow"></div>
+            <div class="pit-icon">🎓</div>
+            <div class="pit-info">
+              <p class="pit-name">Education</p>
+              <p class="pit-sub">Teaching · Academic</p>
+            </div>
+            <div class="pit-check">✓</div>
+          </div>
+          <div class="prem-ind-tile" data-v="engineering" onclick="selInd(this)">
+            <div class="pit-glow"></div>
+            <div class="pit-icon">⚙️</div>
+            <div class="pit-info">
+              <p class="pit-name">Engineering</p>
+              <p class="pit-sub">Civil · Mechanical</p>
+            </div>
+            <div class="pit-check">✓</div>
+          </div>
+        </div>
+
+        <!-- Level + Questions row -->
+        <div class="prem-config-row">
+          <!-- Level -->
+          <div class="prem-config-card">
+            <div class="prem-section-label" style="margin-bottom:18px">
+              <span class="psl-num">02</span>
+              <div><h2 class="psl-title">Experience Level</h2></div>
+            </div>
+            <div class="prem-lvl-grid">
+              <div class="prem-lvl-card selected" data-v="intern" onclick="selLvl(this)">
+                <span class="plc-em">🌱</span>
+                <div>
+                  <p class="plc-name">Internship</p>
+                  <p class="plc-sub">Student / No experience</p>
+                </div>
+                <div class="plc-check">✓</div>
+              </div>
+              <div class="prem-lvl-card" data-v="fresh" onclick="selLvl(this)">
+                <span class="plc-em">🚀</span>
+                <div>
+                  <p class="plc-name">Fresh Graduate</p>
+                  <p class="plc-sub">0–2 years experience</p>
+                </div>
+                <div class="plc-check">✓</div>
+              </div>
+              <div class="prem-lvl-card" data-v="senior" onclick="selLvl(this)">
+                <span class="plc-em">👔</span>
+                <div>
+                  <p class="plc-name">Senior Position</p>
+                  <p class="plc-sub">3+ years experience</p>
+                </div>
+                <div class="plc-check">✓</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Questions + Launch -->
+          <div class="prem-config-card">
+            <div class="prem-section-label" style="margin-bottom:18px">
+              <span class="psl-num">03</span>
+              <div><h2 class="psl-title">Number of Questions</h2><p class="psl-sub">Max 10 per session</p></div>
+            </div>
+            <div class="prem-q-grid">
+              <button class="prem-q-btn selected" data-v="1" onclick="selQ(this)">1</button>
+              <button class="prem-q-btn" data-v="3" onclick="selQ(this)">3</button>
+              <button class="prem-q-btn" data-v="5" onclick="selQ(this)">5</button>
+              <button class="prem-q-btn" onclick="toggleCQ()">Custom</button>
+            </div>
+            <div class="custom-q-wrap hidden" id="cq-wrap">
+              <input type="number" id="cq-input" min="1" max="10" placeholder="1–10" oninput="setCQ(this)"/>
+              <span>max 10</span>
+            </div>
+            <div class="prem-tips">
+              <div class="prem-tip"><span class="pt-num">01</span><span>Use Chrome or Edge for voice recognition</span></div>
+              <div class="prem-tip"><span class="pt-num">02</span><span>Find a quiet place before starting</span></div>
+              <div class="prem-tip"><span class="pt-num">03</span><span>AI auto-submits after 3 seconds of silence</span></div>
+              <div class="prem-tip"><span class="pt-num">04</span><span>Pause the AI anytime using the pause button</span></div>
+            </div>
+            <button class="prem-launch-btn" onclick="startInterview()">
+              <span class="plb-shine"></span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              Begin Interview Session
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SESSIONS VIEW (inside dashboard page) ── -->
+  <div id="dash-sessions-view" style="display:none">
+    <div class="sess-wrap">
+
+      <!-- Sessions Header -->
+      <div class="sess-header">
+        <div class="sess-header-left">
+          <button class="sess-back-btn" onclick="showDashHome()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          </button>
+          <div>
+            <h1 class="sess-title">My Sessions</h1>
+            <p class="sess-subtitle">Your full interview history & performance analytics</p>
+          </div>
+        </div>
+        <div class="sess-header-right">
+          <div class="sess-search-wrap">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <input type="text" id="sess-search" placeholder="Search sessions..." oninput="filterSessions()"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- Analytics Row -->
+      <div class="sess-analytics-v2">
+        <!-- Score Timeline Chart -->
+        <div class="sa-chart-card">
+          <div class="sa-chart-header">
+            <div>
+              <p class="sa-chart-title">Score Timeline</p>
+              <p class="sa-chart-sub">Your score for each session with date</p>
+            </div>
+            <div class="sa-stat-pills">
+              <div class="sa-pill"><span class="sa-pill-icon">🎯</span><span class="sa-pill-val" id="sm-total">0</span><span class="sa-pill-label">Sessions</span></div>
+              <div class="sa-pill"><span class="sa-pill-icon">🏆</span><span class="sa-pill-val" id="sm-best">—</span><span class="sa-pill-label">Best</span></div>
+            </div>
+          </div>
+          <canvas id="prog-chart" height="200" style="width:100%;display:block;"></canvas>
+        </div>
+        <!-- Average Trend Chart -->
+        <div class="sa-chart-card">
+          <div class="sa-chart-header">
+            <div>
+              <p class="sa-chart-title">Average Trend</p>
+              <p class="sa-chart-sub">Running average score over time</p>
+            </div>
+            <div class="sa-stat-pills">
+              <div class="sa-pill"><span class="sa-pill-icon">📈</span><span class="sa-pill-val" id="sm-avg">—</span><span class="sa-pill-label">Average</span></div>
+              <div class="sa-pill"><span class="sa-pill-icon">🔥</span><span class="sa-pill-val" id="sm-streak">0</span><span class="sa-pill-label">Streak</span></div>
+            </div>
+          </div>
+          <canvas id="avg-chart" height="200" style="width:100%;display:block;"></canvas>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div class="sess-filters">
+        <div class="sf-group">
+          <span class="sf-label">Industry</span>
+          <div class="sf-pills">
+            <button class="sf-pill active" data-filter="ind" data-v="all" onclick="setSessFilter(this)">All</button>
+            <button class="sf-pill" data-filter="ind" data-v="tech" onclick="setSessFilter(this)">Tech</button>
+            <button class="sf-pill" data-filter="ind" data-v="banking" onclick="setSessFilter(this)">Finance</button>
+            <button class="sf-pill" data-filter="ind" data-v="healthcare" onclick="setSessFilter(this)">Healthcare</button>
+            <button class="sf-pill" data-filter="ind" data-v="education" onclick="setSessFilter(this)">Education</button>
+            <button class="sf-pill" data-filter="ind" data-v="engineering" onclick="setSessFilter(this)">Engineering</button>
+          </div>
+        </div>
+        <div class="sf-group">
+          <span class="sf-label">Score</span>
+          <div class="sf-pills">
+            <button class="sf-pill active" data-filter="score" data-v="all" onclick="setSessFilter(this)">All</button>
+            <button class="sf-pill" data-filter="score" data-v="excellent" onclick="setSessFilter(this)">Excellent 85+</button>
+            <button class="sf-pill" data-filter="score" data-v="good" onclick="setSessFilter(this)">Good 65+</button>
+            <button class="sf-pill" data-filter="score" data-v="fair" onclick="setSessFilter(this)">Fair 40+</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sessions Grid -->
+      <div class="sess-grid" id="sess-grid"></div>
+      <div class="sess-empty hidden" id="sess-empty">
+        <div class="se-icon">📋</div>
+        <p class="se-title">No sessions found</p>
+        <p class="se-sub">Try adjusting your filters or start a new interview</p>
+        <button class="prem-cta-btn" style="margin-top:16px" onclick="showDashHome()">Start Interview</button>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+
+<!-- ══════════ INTERVIEW PAGE ══════════ -->
+<div id="page-interview" class="page">
+  <div class="iv-layout">
+
+    <!-- Sidebar -->
+    <div class="iv-sidebar">
+      <div class="iv-sb-top">
+        <div class="iv-sb-logo">
+          <div class="iv-sb-mark">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          </div>
+        </div>
+        <button class="iv-sb-back" onclick="safeBack()" title="Leave interview">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        </button>
+      </div>
+
+      <div class="iv-sb-info">
+        <div class="iv-sb-label">Industry</div>
+        <div class="iv-sb-val" id="sb-industry">Technology</div>
+        <div class="iv-sb-label" style="margin-top:12px">Level</div>
+        <div class="iv-sb-val" id="sb-level">Internship</div>
+        <div class="iv-sb-label" style="margin-top:12px">Progress</div>
+        <div class="iv-sb-prog-wrap">
+          <div class="iv-sb-prog" id="sb-prog"></div>
+        </div>
+        <div class="iv-sb-prog-label" id="sb-prog-label">Warmup</div>
+      </div>
+
+      <div class="iv-sb-status-area">
+        <div class="iv-sb-ai-face" id="sb-ai-face">
+          <span class="sb-ai-initials">AI</span>
+          <div class="sb-ai-ring" id="sb-ai-ring"></div>
+        </div>
+        <div class="iv-sb-status-text" id="sb-status-text">Connecting...</div>
+      </div>
+
+      <div class="iv-sb-live-stats">
+        <div class="iv-sb-stat"><span class="sb-s-val" id="sb-words">0</span><span class="sb-s-lbl">Words</span></div>
+        <div class="iv-sb-stat"><span class="sb-s-val" id="sb-fillers">0</span><span class="sb-s-lbl">Fillers</span></div>
+        <div class="iv-sb-stat"><span class="sb-s-val" id="sb-quality">—</span><span class="sb-s-lbl">Quality</span></div>
+      </div>
+    </div>
+
+    <!-- Main chat area -->
+    <div class="iv-main">
+      <div class="iv-chat" id="iv-chat"></div>
+
+      <!-- Transcript -->
+      <div class="iv-transcript-zone">
+        <div class="itz-header">
+          <div class="itz-dot" id="itz-dot"></div>
+          <span id="itz-label">Your answer</span>
+          <span class="itz-hint" id="itz-hint">Mic activates after AI speaks</span>
+        </div>
+        <div class="itz-text" id="itz-text">
+          <span class="itz-placeholder">Speak your answer — it appears here in real time...</span>
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <div class="iv-controls">
+        <button class="iv-end-btn" onclick="safeEnd()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+          End
+        </button>
+        <div class="iv-ctrl-group">
+          <button class="iv-pause-btn" id="iv-pause-btn" onclick="togglePause()" disabled title="Pause AI speaking">
+            <svg id="pause-icon" width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+          </button>
+          <div class="iv-mic-wrap">
+            <div class="mic-ring r1" id="mic-r1"></div>
+            <div class="mic-ring r2" id="mic-r2"></div>
+            <button class="iv-mic-btn" id="iv-mic-btn" disabled onclick="manualSubmit()">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="2" width="6" height="11" rx="3"/><path d="M5 10a7 7 0 0014 0M12 19v3M8 22h8"/></svg>
+            </button>
+          </div>
+          <button class="iv-skip-btn" id="iv-skip-btn" disabled onclick="skipQ()">Skip →</button>
+        </div>
+        <button class="iv-ctrl-end-full" onclick="safeEnd()">End Session</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════ RESULTS PAGE ══════════ -->
+<div id="page-results" class="page">
+  <nav class="nav">
+    <div class="nav-l">
+      <div class="nav-mark"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+      <span class="nav-wordmark">Ai Coach <span style="color:var(--cr2);font-weight:400;font-size:13px">Interview</span></span>
+    </div>
+    <button class="nav-logout-btn" onclick="goToDash()">← Dashboard</button>
+  </nav>
+  <div class="results-wrap">
+    <div class="res-hero">
+      <div class="res-badge">Session Complete</div>
+      <h1 class="res-title">Your Performance Report</h1>
+      <p class="res-meta" id="res-meta">—</p>
+    </div>
+    <div class="res-score-section">
+      <div class="res-ring-wrap">
+        <svg viewBox="0 0 140 140" class="res-ring-svg">
+          <circle cx="70" cy="70" r="58" fill="none" stroke-width="10" class="ring-track"/>
+          <circle cx="70" cy="70" r="58" fill="none" stroke-width="10"
+                  stroke-dasharray="364.4" stroke-dashoffset="364.4"
+                  stroke-linecap="round" transform="rotate(-90 70 70)"
+                  id="ring-prog" class="ring-prog"/>
+        </svg>
+        <div class="res-ring-center">
+          <span class="res-score-num" id="res-num">—</span>
+          <span class="res-score-sub">/100</span>
+          <span class="res-grade" id="res-grade">—</span>
+        </div>
+      </div>
+      <div class="res-bars">
+        <div class="res-bar-row"><span>Communication</span><div class="rb-track"><div class="rb-fill rb-violet" id="rb-comm"></div></div><span id="rv-comm">—</span></div>
+        <div class="res-bar-row"><span>Content Quality</span><div class="rb-track"><div class="rb-fill rb-blue" id="rb-cont"></div></div><span id="rv-cont">—</span></div>
+        <div class="res-bar-row"><span>Confidence</span><div class="rb-track"><div class="rb-fill rb-green" id="rb-conf"></div></div><span id="rv-conf">—</span></div>
+        <div class="res-bar-row"><span>Fluency</span><div class="rb-track"><div class="rb-fill rb-amber" id="rb-flu"></div></div><span id="rv-flu">—</span></div>
+      </div>
+    </div>
+    <div class="res-sw-row">
+      <div class="res-sw-card sw-good"><p class="sw-lbl">✅ Strength</p><p id="sw-str">—</p></div>
+      <div class="res-sw-card sw-bad"><p class="sw-lbl">⚠️ To Improve</p><p id="sw-wk">—</p></div>
+    </div>
+    <div class="res-section"><h3>Improvement Tips</h3><div id="res-tips"></div></div>
+    <div class="res-section"><h3>Answer Breakdown</h3><div id="res-qa"></div></div>
+    <div class="res-cta"><button class="start-btn" style="display:inline-flex;width:auto;padding:13px 40px" onclick="goToDash()">Practice Again</button></div>
+  </div>
+</div>
+
+
+<!-- ══════════ SETTINGS PAGE ══════════ -->
+<div id="page-settings" class="page">
+  <div class="settings-orbs">
+    <div class="settings-orb so1"></div>
+    <div class="settings-orb so2"></div>
+  </div>
+  <input type="file" id="avatar-file-input" accept="image/*" style="display:none" onchange="handleAvatarUpload(this)"/>
+  <nav class="nav">
+    <div class="nav-l">
+      <div class="nav-mark"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+      <span class="nav-wordmark">Ai Coach <span style="color:var(--cr2);font-weight:400;font-size:13px">Interview</span></span>
+    </div>
+    <button class="nav-logout-btn" onclick="goToDash()">← Dashboard</button>
+  </nav>
+  <div class="settings-wrap">
+    <div class="settings-sidebar">
+      <h2 class="settings-title">Settings</h2>
+      <nav class="settings-nav">
+        <button class="sn-item active" data-tab="profile" onclick="switchSettingsTab(this)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Profile
+        </button>
+        <button class="sn-item" data-tab="security" onclick="switchSettingsTab(this)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+          Security
+        </button>
+        <button class="sn-item" data-tab="appearance" onclick="switchSettingsTab(this)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+          Appearance
+        </button>
+        <button class="sn-item" data-tab="voice" onclick="switchSettingsTab(this)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2M12 19v4M8 23h8"/></svg>
+          Voice & Audio
+        </button>
+        <button class="sn-item" data-tab="account" onclick="switchSettingsTab(this)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+          Account
+        </button>
+      </nav>
+    </div>
+
+    <div class="settings-body">
+      <!-- Profile Tab -->
+      <div class="st-tab active" id="st-profile">
+        <h3 class="st-tab-title">Profile</h3>
+        <div class="st-avatar-section" style="flex-direction:column;align-items:center;text-align:center;padding:28px;gap:14px">
+          <div class="st-avatar" id="st-avatar" onclick="document.getElementById('avatar-file-input').click()" style="cursor:pointer;position:relative;width:88px;height:88px;font-size:32px;box-shadow:0 0 25px rgba(192,36,63,.35),0 0 0 3px rgba(192,36,63,.18);transition:all .3s;overflow:hidden" title="Click to change photo">
+            <span id="st-avatar-letter">D</span>
+            <div style="position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.7);padding:6px;text-align:center;font-size:12px;opacity:0;transition:.2s;backdrop-filter:blur(4px)" class="st-avatar-hover-cam">📷 Change</div>
+          </div>
+          <div>
+            <p class="st-avatar-name" id="st-avatar-name" style="font-family:'DM Serif Display',Georgia,serif;font-size:22px">User</p>
+            <p class="st-avatar-email" id="st-avatar-email">—</p>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <button class="stt-change-photo" onclick="document.getElementById('avatar-file-input').click()">📷 Upload Photo</button>
+            <button class="stt-remove-photo" onclick="removeAvatar()">Remove</button>
+          </div>
+        </div>
+        <div class="st-field">
+          <label>Full Name</label>
+          <input type="text" id="st-name" placeholder="Your full name"/>
+        </div>
+        <div class="st-field">
+          <label>Email Address</label>
+          <input type="email" id="st-email" placeholder="your@email.com"/>
+          <p class="st-field-note">Changing your email will require verification</p>
+        </div>
+        <div class="st-alert hidden" id="profile-alert"></div>
+        <button class="st-save-btn" onclick="saveProfile()">Save Changes</button>
+      </div>
+
+      <!-- Security Tab -->
+      <div class="st-tab" id="st-security">
+        <h3 class="st-tab-title">Security</h3>
+        <div class="st-section-card">
+          <h4>Change Password</h4>
+          <p>Your new password must be at least 8 characters with uppercase, number and special character</p>
+          <div class="st-field">
+            <label>New Password</label>
+            <div class="af-pass-wrap">
+              <input type="password" id="st-new-pass" placeholder="New password"/>
+              <button class="af-eye" onclick="toggleEye('st-new-pass',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+            </div>
+          </div>
+          <div class="st-field">
+            <label>Confirm New Password</label>
+            <div class="af-pass-wrap">
+              <input type="password" id="st-confirm-pass" placeholder="Confirm new password"/>
+              <button class="af-eye" onclick="toggleEye('st-confirm-pass',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+            </div>
+          </div>
+          <div class="st-alert hidden" id="security-alert"></div>
+          <button class="st-save-btn" onclick="changePassword()">Update Password</button>
+        </div>
+        <div class="st-section-card">
+          <h4>Password Reset via Email</h4>
+          <p>Prefer to reset via email? We'll send a secure link to your registered email address.</p>
+          <button class="st-outline-btn" onclick="sendResetEmail()">Send Reset Email</button>
+        </div>
+      </div>
+
+      <!-- Appearance Tab -->
+      <div class="st-tab" id="st-appearance">
+        <h3 class="st-tab-title">Appearance</h3>
+        <div class="st-section-card">
+          <h4>Theme</h4>
+          <p>Choose how InterviewAI looks for you</p>
+          <div class="theme-options">
+            <div class="theme-opt" id="thopt-dark" onclick="setTheme('dark')">
+              <div class="thopt-preview dark-preview">
+                <div class="tp-nav"></div>
+                <div class="tp-card"></div>
+                <div class="tp-card2"></div>
+              </div>
+              <p>Dark</p>
+              <div class="thopt-check" id="thcheck-dark">✓</div>
+            </div>
+            <div class="theme-opt" id="thopt-light" onclick="setTheme('light')">
+              <div class="thopt-preview light-preview">
+                <div class="tp-nav"></div>
+                <div class="tp-card"></div>
+                <div class="tp-card2"></div>
+              </div>
+              <p>Light</p>
+              <div class="thopt-check hidden" id="thcheck-light">✓</div>
+            </div>
+          </div>
+        </div>
+        <div class="st-section-card">
+          <h4>Font Size</h4>
+          <p>Adjust the text size across the app</p>
+          <div class="font-size-opts">
+            <button class="fs-opt selected" id="fs-normal" onclick="setFontSize('normal',this)">Normal</button>
+            <button class="fs-opt" id="fs-large" onclick="setFontSize('large',this)">Large</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Voice Tab -->
+      <div class="st-tab" id="st-voice">
+        <h3 class="st-tab-title">Voice & Audio</h3>
+        <div class="st-section-card">
+          <h4>AI Interviewer Voice</h4>
+          <p>Select the voice your AI interviewer speaks with</p>
+          <div class="voice-list">
+            <div class="voice-opt selected" data-id="pNInz6obpgDQGcFmaJgB" onclick="selVoice(this)">
+              <div class="vo-avatar" style="background:#4e1c6b">Ad</div>
+              <div style="flex:1">
+                <p class="vo-name">Adam <span style="font-size:10px;color:var(--cr2);font-weight:600;margin-left:4px">★ RECOMMENDED</span></p>
+                <p class="vo-sub">Confident, direct male voice</p>
+              </div>
+              <button class="vo-preview-btn" onclick="event.stopPropagation();previewVoice('pNInz6obpgDQGcFmaJgB','Adam')" title="Preview Adam">▶</button>
+              <div class="vo-check">✓</div>
+            </div>
+            <div class="voice-opt" data-id="EXAVITQu4vr4xnSDxMaL" onclick="selVoice(this)">
+              <div class="vo-avatar" style="background:#1c5e9b">B</div>
+              <div style="flex:1">
+                <p class="vo-name">Bella</p>
+                <p class="vo-sub">Soft, friendly female voice</p>
+              </div>
+              <button class="vo-preview-btn" onclick="event.stopPropagation();previewVoice('EXAVITQu4vr4xnSDxMaL','Bella')" title="Preview Bella">▶</button>
+              <div class="vo-check hidden">✓</div>
+            </div>
+          </div>
+          <p style="font-size:12px;color:var(--txt3);margin-top:10px">▶ Click the play button to preview each voice before selecting</p>
+        </div>
+        <div class="st-section-card">
+          <h4>AI Speaking Speed</h4>
+          <p>Adjust how fast the AI interviewer speaks</p>
+          <div class="speed-opts">
+            <button class="speed-opt" data-v="0.75" onclick="selSpeed(this)">Slow</button>
+            <button class="speed-opt selected" data-v="0.93" onclick="selSpeed(this)">Normal</button>
+            <button class="speed-opt" data-v="1.4" onclick="selSpeed(this)">Fast</button>
+          </div>
+          <p style="font-size:12px;color:var(--txt3);margin-top:10px">Click a speed to select it and hear a preview automatically</p>
+        </div>
+        <div class="st-section-card">
+          <h4>Silence Detection Delay</h4>
+          <p>How long to wait after you stop speaking before submitting your answer</p>
+          <div class="speed-opts">
+            <button class="speed-opt" data-v="2000" onclick="selSilence(this)">2 sec</button>
+            <button class="speed-opt selected" data-v="3500" onclick="selSilence(this)">3.5 sec</button>
+            <button class="speed-opt" data-v="5000" onclick="selSilence(this)">5 sec</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Account Tab -->
+      <div class="st-tab" id="st-account">
+        <h3 class="st-tab-title">Account</h3>
+        <div class="st-section-card">
+          <h4>Session History</h4>
+          <p>You have completed <strong id="acc-sessions">0</strong> practice sessions stored locally.</p>
+          <button class="st-outline-btn danger-outline" onclick="clearHistory()">Clear Session History</button>
+        </div>
+        <div class="st-section-card">
+          <h4>Sign Out</h4>
+          <p>You will be signed out of your account on this device.</p>
+          <button class="st-outline-btn" onclick="handleLogout()">Sign Out</button>
+        </div>
+        <div class="st-section-card danger-card">
+          <h4>Delete Account</h4>
+          <p>Permanently delete your account and all associated data. This cannot be undone.</p>
+          <button class="st-danger-btn" onclick="confirmDeleteAccount()">Delete My Account</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Overlays -->
+<div id="ov-load" class="overlay hidden">
+  <div class="ov-box">
+    <div class="ov-spin"></div>
+    <p id="ov-load-text">Processing...</p>
+  </div>
+</div>
+<div id="ov-confirm" class="overlay hidden">
+  <div class="ov-box ov-confirm-box">
+    <h3 id="ovc-title">Are you sure?</h3>
+    <p id="ovc-msg">This action cannot be undone.</p>
+    <div class="ovc-btns">
+      <button class="ovc-cancel" onclick="closeOv('ov-confirm')">Cancel</button>
+      <button class="ovc-ok" id="ovc-ok">Confirm</button>
+    </div>
+  </div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="app.js"></script>
+
+</body>
+</html>
