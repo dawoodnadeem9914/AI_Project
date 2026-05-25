@@ -1574,10 +1574,16 @@ function stopListening() {
   clearTimeout(silenceTimer);
 
   if (speechRecognition) {
-    try { speechRecognition.abort(); } catch(e) {}
-    speechRecognition = null;
-  }
-  stopWhisperRecording();
+      try { speechRecognition.abort(); } catch(e) {}
+      speechRecognition = null;
+    }
+    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+      try { mediaRecorder.stop(); } catch(e) {}
+    }
+    if (recordingStream) {
+      recordingStream.getTracks().forEach(t => t.stop());
+      recordingStream = null;
+    }
 
   document.getElementById('iv-mic-btn').classList.remove('on');
   document.getElementById('mic-r1').classList.remove('pulse');
