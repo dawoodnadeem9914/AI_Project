@@ -1839,12 +1839,17 @@ function browserSpeak(text) {
     };
 
     const voices = window.speechSynthesis.getVoices();
-    if (voices.length) {
-      speak();
-    } else {
-      window.speechSynthesis.onvoiceschanged = () => { speak(); };
-      setTimeout(speak, 400);
-    }
+        if (voices.length) {
+          speak();
+        } else {
+          let spoken = false;
+          window.speechSynthesis.onvoiceschanged = () => {
+            if (!spoken) { spoken = true; speak(); }
+          };
+          setTimeout(() => {
+            if (!spoken) { spoken = true; speak(); }
+          }, 400);
+        }
   });
 }
 
