@@ -228,7 +228,7 @@ function applyFontSize(size) {
   let s = document.getElementById("iai-font-inject");
   if (!s) { s = document.createElement("style"); s.id = "iai-font-inject"; document.head.appendChild(s); }
   if (size === "large") {
-      s.textContent = `html { font-size: 19px !important; } body { font-size: 19px !important; } .st-section-card h4, .st-tab-title, .psl-title { font-size: 1.15em !important; } .st-section-card > p, .st-field label, .sn-item, .fs-opt, .speed-opt, .voice-opt .vo-name, .voice-opt .vo-sub, .ac-field label, .ac-field input, .ac-head p, .prem-tip span, .cm-bubble, .itz-text, .st-field input { font-size: 1.05em !important; }`;
+      s.textContent = `html{font-size:19px!important}body{font-size:19px!important}.st-section-card h4,.st-tab-title,.psl-title,.sess-title,.sa-chart-title,.res-title{font-size:1.15em!important}.st-section-card>p,.st-field label,.sn-item,.fs-opt,.speed-opt,.voice-opt .vo-name,.voice-opt .vo-sub,.ac-field label,.ac-field input,.ac-head p,.st-field input,.prem-hero-sub,.prem-greet-txt,.pit-name,.pit-sub,.plc-name,.plc-sub,.prem-tip span,.pnl-btn,.nav-logout-btn,.prem-user-name,.prem-q-btn,.sc-ind-name,.sc-ind-level,.sc-bar-label,.sc-date,.sf-pill,.sess-subtitle,.sa-chart-sub,.cm-bubble,.itz-text,.itz-hint,.iv-sb-val,.iv-sb-label,.iv-sb-status-text,.iv-sb-prog-label,.iv-skip-btn,.iv-end-btn,.iv-ctrl-end-full,.res-meta,.res-bar-row>span,.res-tip-row span,.rqa-q,.rqa-a,.rqa-tag,.sw-lbl,.res-sw-card p,.res-badge{font-size:1.05em!important}`;
     } else {
       s.textContent = "";
     }
