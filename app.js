@@ -192,7 +192,10 @@ function applySettings() {
     if (el) el.textContent = icon;
   });
   syncThemeOptions();
-}
+    document.querySelectorAll(".fs-opt").forEach(b => {
+      b.classList.toggle("selected", b.id === "fs-" + appSettings.fontSize);
+    });
+  }
 
 function toggleTheme() {
   appSettings.theme = appSettings.theme === "dark" ? "light" : "dark";
@@ -227,7 +230,7 @@ function applyFontSize(size) {
   if (size === "large") {
     s.textContent = `body { font-size: 19px !important; }`;
   } else {
-    s.textContent = "body { font-size: 17px !important; }";
+    s.textContent = "body { font-size: 15px !important; }";
   }
 }
 
