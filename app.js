@@ -124,6 +124,10 @@ let warmupDone      = false;
 let warmupTurns     = 0;
 let sessionSeed     = 0;
 let pendingConfirm  = null;
+let speechRecognition = null;
+let mediaRecorder   = null;
+let recordingStream = null;
+let audioChunks     = [];
 
 const IND_LABELS = { tech:"Technology", banking:"Banking & Finance", healthcare:"Healthcare", education:"Education", engineering:"Engineering" };
 const LVL_LABELS = { intern:"Internship", fresh:"Fresh Graduate", senior:"Senior Position" };
@@ -1261,7 +1265,7 @@ async function beginInterview() {
   showTyping();
   const kickoff = [{ role:"user", parts:[{ text:"Start the interview now. Say hello and ask how the candidate is doing." }] }];
   const reply = await callGemini(buildWarmupPrompt(), kickoff);
-  if (!reply || interviewDone) return;
+  if (!reply || interviewDone) { removeTyping(); return; }
   convoHistory.push({ role:"model", parts:[{ text:reply }] });
   removeTyping();
   setSbStatus("speaking","AI is speaking");
@@ -1269,7 +1273,6 @@ async function beginInterview() {
   await typewriterMsg("ai", reply);
   await speakText(reply);
   setPauseState(false);
-  await sleep(2000);
   if (!interviewDone) { setSbStatus("listening","Listening..."); startListening(); }
 }
 
