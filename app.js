@@ -516,10 +516,10 @@ function goToSessions() {
   document.querySelectorAll(".pnl-btn")[1]?.classList.add("active");
   renderSessionsPage();
   requestAnimationFrame(() => {
-    const all = getSessions().slice().reverse();
-    drawProgressChart(all);
-    drawAvgChart(all);
-  });
+      const all = getSessions();
+      drawProgressChart(all);
+      drawAvgChart(all);
+    });
 }
 
 function showDashHome() {
@@ -545,8 +545,8 @@ function renderSessionsPage() {
   if(smAvg)    smAvg.textContent    = avg   !== null ? avg   : "—";
   if(smStreak) smStreak.textContent = streak;
 
-  drawProgressChart(all.slice().reverse());
-  drawAvgChart(all.slice().reverse());
+  drawProgressChart(all);
+    drawAvgChart(all);
 
   filterSessions();
 }
@@ -601,13 +601,22 @@ function _drawHDChart(canvasId, pts, lineColor, glowHex, isAvg) {
   ctx.scale(dpr, dpr);
   ctx.clearRect(0, 0, W, H);
 
-  // Empty state
-  if (!pts.length) {
-    ctx.fillStyle = "rgba(253,240,234,0.18)";
-    ctx.font = "500 13px 'DM Sans', system-ui, sans-serif";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText("No sessions yet — start your first!", W / 2, H / 2);
+    const isDark = document.documentElement.getAttribute("data-theme") !== "light";
+    const txtColor = isDark ? "rgba(253,240,234,0.50)" : "rgba(28,6,8,0.55)";
+    const txtFaint = isDark ? "rgba(253,240,234,0.24)" : "rgba(28,6,8,0.35)";
+    const gridColor = isDark ? "rgba(192,36,63,0.07)" : "rgba(192,36,63,0.12)";
+    const gridZero = isDark ? "rgba(192,36,63,0.22)" : "rgba(192,36,63,0.25)";
+    const labelColor = isDark ? "rgba(253,240,234,0.20)" : "rgba(28,6,8,0.40)";
+    const emptyColor = isDark ? "rgba(253,240,234,0.18)" : "rgba(28,6,8,0.3)";
+    const dotBg = isDark ? "rgba(10,4,7,0.97)" : "rgba(255,255,255,0.97)";
+
+    // Empty state
+    if (!pts.length) {
+      ctx.fillStyle = emptyColor;
+        ctx.font = "500 13px 'DM Sans', system-ui, sans-serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText("No sessions yet — start your first!", W / 2, H / 2);
     return;
   }
 
@@ -624,20 +633,18 @@ function _drawHDChart(canvasId, pts, lineColor, glowHex, isAvg) {
     ctx.save();
     ctx.beginPath();
     ctx.setLineDash(v === 0 ? [] : [3, 9]);
-    ctx.strokeStyle = v === 0
-      ? "rgba(192,36,63,0.22)"
-      : "rgba(192,36,63,0.07)";
+    ctx.strokeStyle = v === 0 ? gridZero : gridColor;
     ctx.lineWidth = v === 0 ? 1 : 0.5;
     ctx.moveTo(padL, y);
     ctx.lineTo(W - padR, y);
     ctx.stroke();
     ctx.restore();
 
-    ctx.fillStyle = "rgba(253,240,234,0.20)";
-    ctx.font = "500 9px 'DM Sans', system-ui, sans-serif";
-    ctx.textAlign = "right";
-    ctx.textBaseline = "middle";
-    ctx.fillText(v, padL - 7, y);
+    ctx.fillStyle = labelColor;
+        ctx.font = "500 9px 'DM Sans', system-ui, sans-serif";
+        ctx.textAlign = "right";
+        ctx.textBaseline = "middle";
+        ctx.fillText(v, padL - 7, y);
   });
 
   // ── BEZIER PATH BUILDER ────────────────────────────────────────────────────
@@ -744,8 +751,8 @@ function _drawHDChart(canvasId, pts, lineColor, glowHex, isAvg) {
     // Dark ring background
     ctx.beginPath();
     ctx.arc(x, y, 6, 0, Math.PI * 2);
-    ctx.fillStyle = "rgba(10,4,7,0.97)";
-    ctx.fill();
+    ctx.fillStyle = dotBg;
+        ctx.fill();
 
     // Colored glowing inner dot
     ctx.save();
@@ -801,14 +808,14 @@ function _drawHDChart(canvasId, pts, lineColor, glowHex, isAvg) {
     const session = `#${i + 1}`;
     const dateStr = d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 
-    ctx.fillStyle    = "rgba(253,240,234,0.50)";
-    ctx.font         = "700 9.5px 'DM Sans', system-ui, sans-serif";
-    ctx.textBaseline = "top";
-    ctx.fillText(session, x, H - padB + 9);
+    ctx.fillStyle    = txtColor;
+        ctx.font         = "700 9.5px 'DM Sans', system-ui, sans-serif";
+        ctx.textBaseline = "top";
+        ctx.fillText(session, x, H - padB + 9);
 
-    ctx.fillStyle = "rgba(253,240,234,0.24)";
-    ctx.font      = "500 8px 'DM Sans', system-ui, sans-serif";
-    ctx.fillText(dateStr, x, H - padB + 23);
+    ctx.fillStyle = txtFaint;
+        ctx.font      = "500 8px 'DM Sans', system-ui, sans-serif";
+        ctx.fillText(dateStr, x, H - padB + 23);
   });
 
   ctx.textBaseline = "alphabetic";
@@ -816,13 +823,13 @@ function _drawHDChart(canvasId, pts, lineColor, glowHex, isAvg) {
 
 // ─── PUBLIC: SCORE TIMELINE ───────────────────────────────────────────────────
 function drawProgressChart(sessions) {
-  const pts = sessions.slice(-10);
+  const pts = sessions.slice().reverse().slice(-10);
   _drawHDChart("prog-chart", pts, "#e03050", "#e03050", false);
 }
 
 // ─── PUBLIC: AVERAGE TREND ────────────────────────────────────────────────────
 function drawAvgChart(sessions) {
-  const raw = sessions.slice(-10);
+  const raw = sessions.slice().reverse().slice(-10);
   let sum = 0;
   const pts = raw.map((p, i) => ({
     score: Math.round((sum += p.score) / (i + 1)),
@@ -834,6 +841,7 @@ function drawAvgChart(sessions) {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 function filterSessions() {
+  sessShowCount = 6;
   const search = (document.getElementById("sess-search")?.value || "").toLowerCase();
   const all    = getSessions().slice().reverse();
 
@@ -873,10 +881,15 @@ function getScoreGrade(score) {
 
 const IND_ICONS = { tech:"💻", banking:"🏦", healthcare:"🏥", education:"🎓", engineering:"⚙️" };
 
+let sessShowCount = 6;
+
 function renderSessionCards(sessions) {
   const grid  = document.getElementById("sess-grid");
   const empty = document.getElementById("sess-empty");
   if (!grid) return;
+
+  // Remove old "Show More" button
+  document.getElementById("sess-show-more")?.remove();
 
   if (!sessions.length) {
     grid.innerHTML = "";
@@ -885,7 +898,9 @@ function renderSessionCards(sessions) {
   }
   empty?.classList.add("hidden");
 
-  grid.innerHTML = sessions.map((s, idx) => {
+  const visible = sessions.slice(0, sessShowCount);
+
+  grid.innerHTML = visible.map((s, idx) => {
     const grade = getScoreGrade(s.score);
     const icon  = IND_ICONS[s.industry] || "📋";
     const date  = new Date(s.date).toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"});
@@ -929,6 +944,16 @@ function renderSessionCards(sessions) {
       </div>
     </div>`;
   }).join("");
+
+  // Show "Show More" button if there are more sessions
+  if (sessions.length > sessShowCount) {
+    const remaining = sessions.length - sessShowCount;
+    const btn = document.createElement("div");
+    btn.id = "sess-show-more";
+    btn.style.cssText = "text-align:center;margin-top:20px";
+    btn.innerHTML = `<button onclick="sessShowCount+=6;filterSessions()" style="background:var(--bg3);border:1.5px solid var(--bdr2);color:var(--txt2);padding:10px 28px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:.2s">Show More (${remaining} remaining)</button>`;
+    grid.parentElement.appendChild(btn);
+  }
 }
 
 function getSessionsKey() {
