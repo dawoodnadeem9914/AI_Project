@@ -1796,7 +1796,7 @@ function togglePause() {
 async function speakText(text) {
   if (interviewDone) return;
   stopListening();
-  if (!ELEVENLABS_KEY||ELEVENLABS_KEY==="paste-your-elevenlabs-key-here") { await browserSpeak(text); return; }
+  if (!ELEVENLABS_KEY||ELEVENLABS_KEY==="paste-your-elevenlabs-key-here"||true) { await browserSpeak(text); return; }
   try {
     const res = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${appSettings.voice}`, {
       method:"POST",
