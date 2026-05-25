@@ -1338,7 +1338,7 @@ async function handleAnswer(answer) {
     sys = buildTechnicalPrompt();
     instruction = isSkipped
       ? `Candidate skipped. Briefly acknowledge ("Let's try another one.") then ask technical question ${currentQ + 1} of ${totalQ}. Seed:${sessionSeed}-Q${currentQ}. Never repeat a previous question.`
-      : `Acknowledge in 1-3 words only. Then ask the next technical question (${currentQ + 1} of ${totalQ}). Seed:${sessionSeed}-Q${currentQ}. Never repeat a previous question.`;
+      : `React to what the candidate just said in 1 brief sentence — reference something SPECIFIC they mentioned. Then ask the next technical question (${currentQ + 1} of ${totalQ}). Seed:${sessionSeed}-Q${currentQ}. Never repeat a previous question.`;
   }
 
   // ── FIXED: instruction goes into a TEMP array, not convoHistory ──
@@ -1388,7 +1388,7 @@ function buildTechnicalPrompt() {
   const shuffled = pool.slice().sort(() => Math.sin(sessionSeed + currentQ * 137.5 + Math.random()) - 0.5);
   const picked = shuffled.slice(0, 5).join(", ");
   return `You are a professional HR interviewer at a top ${IND_LABELS[selIndustry]} company. Technical interview phase for ${LVL_LABELS[selLevel]} candidate.
-RULES: Ask exactly ONE question. Max 2 sentences. Acknowledge their previous answer in 1-3 words only (no praise).
+RULES: Ask exactly ONE question. Max 3 sentences. First, give a brief 1-sentence reaction to their previous answer showing you understood it (e.g. "That's a solid approach to TCP reliability — using the three-way handshake example was clear."). Then ask the next question.
 CRITICAL — DO NOT repeat or rephrase any of these already-asked questions: [${previousQuestions}]
 Your question MUST be about a DIFFERENT topic. Pick from: ${picked}.
 Question number ${currentQ + 1} of ${totalQ}. Be creative and specific.`;
@@ -1915,15 +1915,17 @@ async function getReport() {
     `Q${i+1}: ${a.question}\nAnswer: ${a.answer}\nWords: ${a.words}, Fillers: ${a.fillers}`
   ).join("\n\n");
 
-  const scoring = `CRITICAL SCORING — you MUST differentiate scores based on CONTENT QUALITY, not just length.
-  SKIPPED or "(No answer — skipped)" or 0 words: overallScore MUST be 0-5.
-  BAD answer (vague, off-topic, no examples, generic): 15-35 regardless of length.
-  DECENT answer (somewhat relevant, basic understanding): 40-58.
-  GOOD answer (relevant, shows understanding, some specifics): 60-75.
-  STRONG answer (detailed, specific examples, well-structured, STAR method): 76-88.
-  EXPERT answer (exceptional depth, multiple examples, industry knowledge): 89-98.
-  IMPORTANT: Judge the SUBSTANCE of what was said. A long rambling answer with no real content scores LOW (25-40). A concise answer with specific examples scores HIGH (70-85). Filler words (um, uh, basically, literally): each one reduces fluencyScore by 4. The transcript is from speech recognition so ignore missing punctuation — focus on the IDEAS expressed.
-  You MUST vary scores. Do NOT default to 60-65. Read each answer carefully and score based on its actual merit.`;
+  const scoring = `CRITICAL SCORING — score based on CONTENT QUALITY. This is speech-to-text so ignore punctuation/grammar.
+    SKIPPED or "(No answer — skipped)" or under 5 words: overallScore 0-5.
+    POOR (under 30 words, vague, off-topic, no substance): 10-30.
+    BASIC (30-80 words, somewhat relevant but generic, no examples): 35-50.
+    DECENT (80-150 words, relevant with some specifics): 50-65.
+    GOOD (150-250 words, clear understanding, gives examples): 65-78.
+    STRONG (250-400 words, detailed examples, well-structured, STAR method): 78-88.
+    EXCELLENT (400+ words, exceptional depth, multiple specific examples, industry knowledge): 88-96.
+    IMPORTANT: These ranges are guidelines — quality matters MORE than length. A 200-word answer with perfect STAR examples can score 82. A 500-word rambling answer with no real substance scores 40-55.
+    Each filler word (um, uh, basically, literally) reduces fluencyScore by 4.
+    You MUST score based on actual content. Do NOT copy the example scores below — they are FORMAT examples only.`;
 
   const prompt = `Evaluate this ${LVL_LABELS[selLevel]} ${IND_LABELS[selIndustry]} interview.
 ${scoring}
