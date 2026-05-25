@@ -1227,7 +1227,7 @@ async function confirmDeleteAccount() {
 
 // ─── START INTERVIEW ─────────────────────────────────
 async function startInterview() {
-
+  if (!currentUser) { showPage("page-auth"); return; }
   if (!document.getElementById("cq-wrap").classList.contains("hidden")) {
     const v = parseInt(document.getElementById("cq-input").value)||1;
     totalQ = Math.min(10,Math.max(1,v));
@@ -1256,6 +1256,7 @@ async function startInterview() {
 
 // ─── INTERVIEW FLOW ──────────────────────────────────
 async function beginInterview() {
+  if (convoHistory.length > 0) return;
   setSbStatus("thinking","AI is preparing...");
   showTyping();
   const kickoff = [{ role:"user", parts:[{ text:"Start the interview now. Say hello and ask how the candidate is doing." }] }];
@@ -1786,6 +1787,7 @@ function togglePause() {
 // ─── TTS ─────────────────────────────────────────────
 async function speakText(text) {
   if (interviewDone) return;
+  stopListening();
   if (!ELEVENLABS_KEY||ELEVENLABS_KEY==="paste-your-elevenlabs-key-here") { await browserSpeak(text); return; }
   try {
     const res = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${appSettings.voice}`, {
@@ -1843,9 +1845,12 @@ function safeEnd() {
 
 function forceExit() {
   interviewDone=true; stopListening();
+  clearTimeout(silenceTimer);
+  if (recognition) { try { recognition.abort(); } catch(e) {} recognition=null; }
   currentAudio?.pause(); currentAudio=null;
   window.speechSynthesis?.cancel(); currentUtt=null;
   showPage("page-dashboard");
+  initDashboard();
 }
 
 async function doEndAndScore() {
