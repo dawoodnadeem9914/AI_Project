@@ -112,6 +112,7 @@ let convoHistory    = [];
 let liveTranscript  = "";
 let fillerCount     = 0;
 let wordCount       = 0;
+let hasSpeechStarted = false;
 let isListening     = false;
 let recognition     = null;
 let silenceTimer    = null;
@@ -1536,13 +1537,6 @@ function supportsWebSpeech() {
   return ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) && !isIOS();
 }
 
-// ─── VOICE STATE ─────────────────────────────────────
-let mediaRecorder    = null;
-let audioChunks      = [];
-let recordingStream  = null;
-let speechRecognition = null;
-let silenceTimer     = null;
-let hasSpeechStarted = false;
 
 // ─── START LISTENING ─────────────────────────────────
 function startListening() {
