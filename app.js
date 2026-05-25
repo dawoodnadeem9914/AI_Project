@@ -228,10 +228,10 @@ function applyFontSize(size) {
   let s = document.getElementById("iai-font-inject");
   if (!s) { s = document.createElement("style"); s.id = "iai-font-inject"; document.head.appendChild(s); }
   if (size === "large") {
-    s.textContent = `body { font-size: 19px !important; }`;
-  } else {
-    s.textContent = "body { font-size: 15px !important; }";
-  }
+      s.textContent = `html { font-size: 19px !important; } body { font-size: 19px !important; }`;
+    } else {
+      s.textContent = "";
+    }
 }
 
 // ─── PAGE NAV ────────────────────────────────────────
