@@ -1650,11 +1650,10 @@ function startWebSpeechRecognition() {
   speechRecognition.onspeechend = () => {};
 
   speechRecognition.onend = () => {
-    // Browser cuts recognition after ~60 s — restart if still listening
-    if (isListening && !interviewDone) {
-      try { speechRecognition.start(); } catch(e) {}
-    }
-  };
+      if (isListening && !interviewDone && speechRecognition) {
+        try { speechRecognition.start(); } catch(e) {}
+      }
+    };
 
   speechRecognition.onerror = (e) => {
     if (['no-speech', 'aborted'].includes(e.error)) return;
