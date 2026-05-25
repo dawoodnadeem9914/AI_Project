@@ -228,7 +228,7 @@ function applyFontSize(size) {
   let s = document.getElementById("iai-font-inject");
   if (!s) { s = document.createElement("style"); s.id = "iai-font-inject"; document.head.appendChild(s); }
   if (size === "large") {
-      s.textContent = `html { font-size: 19px !important; } body { font-size: 19px !important; }`;
+      s.textContent = `html { font-size: 19px !important; } body { font-size: 19px !important; } .st-section-card h4, .st-tab-title, .psl-title { font-size: 1.15em !important; } .st-section-card > p, .st-field label, .sn-item, .fs-opt, .speed-opt, .voice-opt .vo-name, .voice-opt .vo-sub, .ac-field label, .ac-field input, .ac-head p, .prem-tip span, .cm-bubble, .itz-text, .st-field input { font-size: 1.05em !important; }`;
     } else {
       s.textContent = "";
     }
