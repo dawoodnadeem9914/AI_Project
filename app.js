@@ -1257,8 +1257,8 @@ async function startInterview() {
 async function beginInterview() {
   setSbStatus("thinking","AI is preparing...");
   showTyping();
-  convoHistory.push({ role:"user", parts:[{ text:"Start the interview now." }] });
-  const reply = await callGemini(buildWarmupPrompt(), convoHistory);
+  const kickoff = [{ role:"user", parts:[{ text:"Start the interview now. Say hello and ask how the candidate is doing." }] }];
+  const reply = await callGemini(buildWarmupPrompt(), kickoff);
   if (!reply || interviewDone) return;
   convoHistory.push({ role:"model", parts:[{ text:reply }] });
   removeTyping();
@@ -1277,60 +1277,75 @@ async function handleAnswer(answer) {
   addUserMsg(answer);
 
   if (warmupDone) {
-    allAnswers.push({ question:getLastAIMsg(), answer, fillers:fillerCount, words:wordCount });
+    allAnswers.push({ question: getLastAIMsg(), answer, fillers: fillerCount, words: wordCount });
     currentQ++;
     updateSbProgress();
-  } else { warmupTurns++; }
+  } else {
+    warmupTurns++;
+  }
 
-  liveTranscript=""; fillerCount=0; wordCount=0; resetStats();
-  document.getElementById("itz-text").innerHTML = `<span class="itz-placeholder">Speak your answer — it appears here in real time...</span>`;
-  document.getElementById("itz-dot").classList.remove("live");
-  document.getElementById("itz-hint").textContent = "Processing...";
+  liveTranscript = ''; fillerCount = 0; wordCount = 0; resetStats();
+  document.getElementById('itz-text').innerHTML =
+    `<span class="itz-placeholder">Speak your answer — it appears here in real time...</span>`;
+  document.getElementById('itz-dot').classList.remove('live');
+  document.getElementById('itz-hint').textContent = 'Processing...';
 
-  convoHistory.push({ role:"user", parts:[{ text:answer }] });
+  // Add user answer to history
+  convoHistory.push({ role: 'user', parts: [{ text: answer }] });
 
-  if (warmupDone && currentQ>=totalQ) { await doEndAndScore(); return; }
+  if (warmupDone && currentQ >= totalQ) { await doEndAndScore(); return; }
 
-  setSbStatus("thinking","AI is thinking...");
+  setSbStatus('thinking', 'AI is thinking...');
   showTyping();
   setMicState(false); setSkipState(false);
 
-  const isSkipped = answer === "(No answer — skipped)" || answer.trim().length < 3;
+  const isSkipped = answer === '(No answer — skipped)' || answer.trim().length < 3;
 
   let sys, instruction;
+
   if (!warmupDone && warmupTurns >= 3) {
-    warmupDone=true;
-    document.getElementById("sb-prog-label").textContent="Q 1 / "+totalQ;
-    sys=buildTransitionPrompt();
-    instruction=isSkipped
-      ? `The candidate did not respond or skipped. Transition to the technical phase: "No worries! Let me move on to some specific questions." Then ask the first technical question (Q 1 of ${totalQ}).`
-      : `The candidate completed warmup. Transition smoothly: "Thank you for sharing that. Let me now ask you some more specific questions." Then ask the first technical question (Q 1 of ${totalQ}).`;
+    // ── Transition to technical phase ──
+    warmupDone = true;
+    document.getElementById('sb-prog-label').textContent = 'Q 1 / ' + totalQ;
+    sys = buildTransitionPrompt();
+    instruction = isSkipped
+      ? `The candidate did not respond. Transition to technical questions: briefly say "No worries, let's move on!" then ask the first technical question (Q 1 of ${totalQ}).`
+      : `Transition smoothly — one short sentence like "Great, let's move to some specific questions now." Then ask the first technical question (Q 1 of ${totalQ}).`;
+
   } else if (!warmupDone) {
-    sys=buildWarmupPrompt();
-    instruction=isSkipped
-      ? "The candidate did not respond or skipped this question. Politely acknowledge this and ask a simpler follow-up question about their background. Do NOT pretend they said something."
-      : "Based on what they just said, ask ONE specific natural follow-up question about their background or what they mentioned. Be genuinely curious and conversational.";
+    // ── Still in warmup ──
+    sys = buildWarmupPrompt();
+    instruction = isSkipped
+      ? 'The candidate did not respond. Politely acknowledge this and ask a simpler warmup question. Do not pretend they answered.'
+      : 'Based on their answer, ask ONE specific natural follow-up question about their background. Be conversational.';
+
   } else {
-    sys=buildTechnicalPrompt();
-    instruction=isSkipped
-      ? `The candidate skipped or gave no answer. Note it briefly: "Let's try another one." Ask the next unique technical question (${currentQ+1} of ${totalQ}). Seed: ${sessionSeed}-Q${currentQ}. NEVER repeat.`
-      : `Acknowledge in 1-3 words. Ask the next unique technical question (${currentQ+1} of ${totalQ}). Seed: ${sessionSeed}-Q${currentQ}. NEVER repeat.`;
+    // ── Technical question ──
+    sys = buildTechnicalPrompt();
+    instruction = isSkipped
+      ? `Candidate skipped. Briefly acknowledge ("Let's try another one.") then ask technical question ${currentQ + 1} of ${totalQ}. Seed:${sessionSeed}-Q${currentQ}. Never repeat a previous question.`
+      : `Acknowledge in 1-3 words only. Then ask the next technical question (${currentQ + 1} of ${totalQ}). Seed:${sessionSeed}-Q${currentQ}. Never repeat a previous question.`;
   }
 
-  convoHistory.push({ role:"user", parts:[{ text:instruction }] });
-  const reply = await callGemini(sys, convoHistory);
+  // ── FIXED: instruction goes into a TEMP array, not convoHistory ──
+  // This stops the model seeing accumulated instructions on every turn.
+  const messagesForThisTurn = [...convoHistory, { role: 'user', parts: [{ text: instruction }] }];
+  const reply = await callGemini(sys, messagesForThisTurn);
+
   if (!reply || interviewDone) { removeTyping(); return; }
-  convoHistory.push({ role:"model", parts:[{ text:reply }] });
+
+  // Only the AI's actual reply is saved to history
+  convoHistory.push({ role: 'model', parts: [{ text: reply }] });
+
   removeTyping();
-  setSbStatus("speaking","AI is speaking");
+  setSbStatus('speaking', 'AI is speaking');
   setPauseState(true);
-  await typewriterMsg("ai", reply);
+  await typewriterMsg('ai', reply);
   await speakText(reply);
   setPauseState(false);
   await sleep(2000);
-  if (!interviewDone) { setSbStatus("listening","Listening..."); startListening(); }
+  if (!interviewDone) { setSbStatus('listening', 'Listening...'); startListening(); }
 }
-
 // ─── PROMPTS ─────────────────────────────────────────
 function buildWarmupPrompt() {
   return `You are a professional, warm HR interviewer at a top ${IND_LABELS[selIndustry]} company. You are conducting a real ${LVL_LABELS[selLevel]} job interview.
@@ -1512,92 +1527,208 @@ function getLastAIMsg() {
 }
 
 // ─── VOICE ───────────────────────────────────────────
+// ─── PLATFORM DETECTION ──────────────────────────────
+function isIOS() {
+  return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+}
+function supportsWebSpeech() {
+  // Web Speech API works on Chrome, Edge, Android Chrome — NOT iOS Safari
+  return ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) && !isIOS();
+}
+
+// ─── VOICE STATE ─────────────────────────────────────
+let mediaRecorder    = null;
+let audioChunks      = [];
+let recordingStream  = null;
+let speechRecognition = null;
+let silenceTimer     = null;
+let hasSpeechStarted = false;
+
+// ─── START LISTENING ─────────────────────────────────
 function startListening() {
-  isListening = true;
-  liveTranscript = "";
-  setMicState(true); setSkipState(true);
-  document.getElementById("iv-mic-btn").classList.add("on");
-  document.getElementById("mic-r1").classList.add("pulse");
-  document.getElementById("mic-r2").classList.add("pulse");
-  document.getElementById("itz-dot").classList.add("live");
-  document.getElementById("itz-hint").textContent = "Listening — tap mic to submit";
-  document.getElementById("itz-text").innerHTML =
-    `<span class="itz-placeholder">Speak your answer — recording...</span>`;
+  isListening      = true;
+  liveTranscript   = '';
+  hasSpeechStarted = false;
 
-  startWhisperRecording();
-}
+  setMicState(true);
+  setSkipState(true);
+  document.getElementById('iv-mic-btn').classList.add('on');
+  document.getElementById('mic-r1').classList.add('pulse');
+  document.getElementById('mic-r2').classList.add('pulse');
+  document.getElementById('itz-dot').classList.add('live');
+  document.getElementById('itz-hint').textContent = 'Listening — tap mic to submit';
+  document.getElementById('itz-text').innerHTML =
+    `<span class="itz-placeholder">Listening... speak your answer</span>`;
 
-function stopListening() {
-  isListening = false;
-  clearTimeout(silenceTimer);
-  stopWhisperRecording();
-  document.getElementById("iv-mic-btn").classList.remove("on");
-  document.getElementById("mic-r1").classList.remove("pulse");
-  document.getElementById("mic-r2").classList.remove("pulse");
-  document.getElementById("itz-dot").classList.remove("live");
-  document.getElementById("itz-hint").textContent = "Processing...";
-  setMicState(false); setSkipState(false);
-}
-
-function manualSubmit() {
-  if (interviewDone) return;
-  stopListening();
-  if (liveTranscript.trim()) {
-    handleAnswer(liveTranscript.trim());
+  if (supportsWebSpeech()) {
+    startWebSpeechRecognition();   // Desktop / Android
+  } else {
+    startWhisperRecording();       // iOS Safari fallback
+    document.getElementById('itz-text').innerHTML =
+      `<span class="itz-placeholder">🎙 Recording... tap the mic button when done</span>`;
+    document.getElementById('itz-hint').textContent = 'Tap mic when finished speaking';
   }
 }
 
-function skipQ() {
-  const ans=liveTranscript.trim()||"(No answer — skipped)";
-  stopListening(); handleAnswer(ans);
+// ─── STOP LISTENING ──────────────────────────────────
+function stopListening() {
+  isListening = false;
+  clearTimeout(silenceTimer);
+
+  if (speechRecognition) {
+    try { speechRecognition.abort(); } catch(e) {}
+    speechRecognition = null;
+  }
+  stopWhisperRecording();
+
+  document.getElementById('iv-mic-btn').classList.remove('on');
+  document.getElementById('mic-r1').classList.remove('pulse');
+  document.getElementById('mic-r2').classList.remove('pulse');
+  document.getElementById('itz-dot').classList.remove('live');
+  document.getElementById('itz-hint').textContent = 'Processing...';
+  setMicState(false);
+  setSkipState(false);
 }
 
-let mediaRecorder = null;
-let audioChunks = [];
-let recordingStream = null;
+// ═══════════════════════════════════════════════════
+//  WEB SPEECH API  (Chrome, Edge, Android)
+//  Shows text LIVE as user speaks.
+//  Only submits after the user STOPS + silence delay elapses.
+// ═══════════════════════════════════════════════════
+function startWebSpeechRecognition() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  speechRecognition = new SR();
+  speechRecognition.continuous      = true;
+  speechRecognition.interimResults  = true;
+  speechRecognition.lang            = 'en-US';
+  speechRecognition.maxAlternatives = 1;
 
+  let finalTranscript = '';
+
+  speechRecognition.onstart = () => {
+    document.getElementById('itz-text').innerHTML =
+      `<span class="itz-placeholder">Listening... speak now</span>`;
+  };
+
+  speechRecognition.onresult = (event) => {
+    if (!isListening) return;
+
+    let interim = '';
+    for (let i = event.resultIndex; i < event.results.length; i++) {
+      const t = event.results[i][0].transcript;
+      if (event.results[i].isFinal) {
+        finalTranscript += t + ' ';
+      } else {
+        interim += t;
+      }
+    }
+
+    liveTranscript = (finalTranscript + interim).trim();
+
+    // ← THIS is what makes text appear live on screen
+    if (liveTranscript) {
+      document.getElementById('itz-text').textContent = liveTranscript;
+      updateStats(liveTranscript);
+      hasSpeechStarted = true;
+
+      // Reset the silence countdown every time new speech arrives
+      clearTimeout(silenceTimer);
+      silenceTimer = setTimeout(() => {
+        if (isListening && hasSpeechStarted && !interviewDone) {
+          autoSubmitAnswer();
+        }
+      }, appSettings.silence); // 2000 / 3500 / 5000 ms — user's choice
+    }
+  };
+
+  // onspeechend fires when the user pauses — we use the timer above instead
+  // so we don't double-trigger. This is intentionally left empty.
+  speechRecognition.onspeechend = () => {};
+
+  speechRecognition.onend = () => {
+    // Browser cuts recognition after ~60 s — restart if still listening
+    if (isListening && !interviewDone) {
+      try { speechRecognition.start(); } catch(e) {}
+    }
+  };
+
+  speechRecognition.onerror = (e) => {
+    if (['no-speech', 'aborted'].includes(e.error)) return;
+    if (e.error === 'not-allowed') {
+      addErrMsg('Microphone permission denied. Please allow mic access in your browser settings.');
+      stopListening();
+    }
+  };
+
+  try {
+    speechRecognition.start();
+  } catch(e) {
+    speechRecognition = null;
+    startWhisperRecording(); // fallback
+  }
+}
+
+// ─── AUTO-SUBMIT after silence ───────────────────────
+function autoSubmitAnswer() {
+  if (!isListening || interviewDone) return;
+  const ans = liveTranscript.trim();
+  if (ans.length > 0) {
+    stopListening();
+    handleAnswer(ans);
+  }
+  // if nothing spoken yet, just keep listening
+}
+
+// ─── MANUAL: tap mic button ───────────────────────────
+function manualSubmit() {
+  if (interviewDone) return;
+  clearTimeout(silenceTimer);
+  stopListening();
+  const ans = liveTranscript.trim();
+  if (ans) {
+    handleAnswer(ans);
+  }
+}
+
+// ─── SKIP ─────────────────────────────────────────────
+function skipQ() {
+  const ans = liveTranscript.trim() || '(No answer — skipped)';
+  clearTimeout(silenceTimer);
+  stopListening();
+  handleAnswer(ans);
+}
+
+// ═══════════════════════════════════════════════════
+//  iOS WHISPER FALLBACK
+//  No live transcript — records then transcribes on submit.
+// ═══════════════════════════════════════════════════
 async function startWhisperRecording() {
   try {
     recordingStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    const mimeType = MediaRecorder.isTypeSupported("audio/webm")
-      ? "audio/webm"
-      : MediaRecorder.isTypeSupported("audio/mp4")
-      ? "audio/mp4"
-      : "audio/ogg";
-
+    const mimeType  = MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm'
+                    : MediaRecorder.isTypeSupported('audio/mp4')  ? 'audio/mp4'
+                    : 'audio/ogg';
     mediaRecorder = new MediaRecorder(recordingStream, { mimeType });
-    audioChunks = [];
+    audioChunks   = [];
 
     mediaRecorder.ondataavailable = (e) => {
-      if (e.data.size > 0) {
-        audioChunks.push(e.data);
-        document.getElementById("itz-text").textContent = "🎙 Recording your answer...";
-      }
+      if (e.data.size > 0) audioChunks.push(e.data);
     };
 
     mediaRecorder.onstop = async () => {
-      if (!isListening && audioChunks.length > 0) {
-        await transcribeWithWhisper();
-      }
+      if (audioChunks.length > 0) await transcribeWithWhisper();
     };
 
     mediaRecorder.start(250);
-
-    silenceTimer = setTimeout(() => {
-      if (isListening && !interviewDone && !isPaused && audioChunks.length > 2) {
-        manualSubmit();
-      }
-    }, appSettings.silence + 8000);
-
-  } catch (e) {
-    addErrMsg("Microphone access denied. Please allow mic access in your browser settings.");
+  } catch(e) {
+    addErrMsg('Microphone access denied. Please allow mic in browser settings.');
     stopListening();
   }
 }
 
 function stopWhisperRecording() {
-  if (mediaRecorder && mediaRecorder.state !== "inactive") {
-    mediaRecorder.stop();
+  if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+    try { mediaRecorder.stop(); } catch(e) {}
   }
   if (recordingStream) {
     recordingStream.getTracks().forEach(t => t.stop());
@@ -1606,46 +1737,41 @@ function stopWhisperRecording() {
 }
 
 async function transcribeWithWhisper() {
-  if (audioChunks.length === 0) return;
+  if (audioChunks.length === 0) { handleAnswer('(No answer — skipped)'); return; }
 
-  document.getElementById("itz-hint").textContent = "Transcribing...";
+  document.getElementById('itz-hint').textContent = 'Transcribing...';
+  document.getElementById('itz-text').innerHTML =
+    `<span class="itz-placeholder">⏳ Processing your audio...</span>`;
 
-  const mimeType = audioChunks[0].type || "audio/webm";
-  const ext = mimeType.includes("mp4") ? "mp4"
-    : mimeType.includes("ogg") ? "ogg" : "webm";
+  const mimeType = audioChunks[0].type || 'audio/webm';
+  const ext      = mimeType.includes('mp4') ? 'mp4' : mimeType.includes('ogg') ? 'ogg' : 'webm';
+  const blob     = new Blob(audioChunks, { type: mimeType });
+  audioChunks    = [];
 
-  const blob = new Blob(audioChunks, { type: mimeType });
-  audioChunks = [];
-
-  if (blob.size < 1000) {
-    handleAnswer("(No answer — skipped)");
-    return;
-  }
+  if (blob.size < 1000) { handleAnswer('(No answer — skipped)'); return; }
 
   const formData = new FormData();
-  formData.append("file", blob, `audio.${ext}`);
-  formData.append("model", "whisper-1");
-  formData.append("language", "en");
+  formData.append('file', blob, `audio.${ext}`);
+  formData.append('model', 'whisper-1');
+  formData.append('language', 'en');
 
   try {
-    const res = await fetch(OPENAI_URL + "/v1/audio/transcriptions", {
-      method: "POST",
-      headers: { "Authorization": "Bearer " + OPENAI_KEY },
+    const res  = await fetch(OPENAI_URL + '/v1/audio/transcriptions', {
+      method: 'POST',
+      headers: { Authorization: 'Bearer ' + OPENAI_KEY },
       body: formData,
     });
-
     const data = await res.json();
-
-    if (data.text && data.text.trim().length > 0) {
+    if (data.text && data.text.trim()) {
       liveTranscript = data.text.trim();
-      document.getElementById("itz-text").textContent = liveTranscript;
+      document.getElementById('itz-text').textContent = liveTranscript;
       handleAnswer(liveTranscript);
     } else {
-      handleAnswer("(No answer — skipped)");
+      handleAnswer('(No answer — skipped)');
     }
-  } catch (e) {
-    addErrMsg("Transcription failed. Please try again.");
-    handleAnswer("(No answer — skipped)");
+  } catch(e) {
+    addErrMsg('Transcription failed. Please try again.');
+    handleAnswer('(No answer — skipped)');
   }
 }
 
