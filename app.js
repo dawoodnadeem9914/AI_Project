@@ -131,7 +131,7 @@ let audioChunks     = [];
 
 const IND_LABELS = { tech:"Technology", banking:"Banking & Finance", healthcare:"Healthcare", education:"Education", engineering:"Engineering" };
 const LVL_LABELS = { intern:"Internship", fresh:"Fresh Graduate", senior:"Senior Position" };
-const FILLERS    = ["um","uh","like","err","you know","basically","actually","literally","sort of","kind of","so","right","okay so","hmm"];
+const FILLERS    = ["um","uh","err","basically","literally","sort of","kind of","okay so","hmm"];
 
 // ─── INIT ─────────────────────────────────────────────
 document.addEventListener("DOMContentLoaded", async () => {
@@ -1357,10 +1357,10 @@ async function handleAnswer(answer) {
   await typewriterMsg('ai', reply);
   await speakText(reply);
   setPauseState(false);
-  await sleep(3000);
+  await sleep(1300);
   if (!interviewDone) {
     setSbStatus('listening', 'Listening...');
-    await sleep(800);
+    await sleep(500);
     if (!interviewDone) startListening();
   }
 }
@@ -1376,15 +1376,22 @@ function buildTransitionPrompt() {
 
 function buildTechnicalPrompt() {
   const topics = {
-    tech:["specific project you built","debugging approach","system design thinking","tech stack choices","handling technical debt","code review experience","learning new technologies","performance optimization","teamwork on technical projects","handling production incidents"],
-    banking:["financial analysis experience","risk management approach","client relationship handling","regulatory compliance knowledge","attention to detail in financial work","analytical decision making","data-driven problem solving","working under market pressure","financial modelling","stakeholder communication"],
-    healthcare:["handling a difficult patient situation","working under clinical pressure","multidisciplinary teamwork","patient privacy and ethics","keeping up with medical developments","managing emotional demands","clinical documentation","handling medical errors","patient education approach","triage and prioritization"],
-    education:["classroom management approach","handling a disruptive student","curriculum design experience","parent communication","inclusive teaching methods","student assessment and feedback","professional development","integrating technology in teaching","supporting diverse learners","motivating disengaged students"],
-    engineering:["complex engineering problem you solved","project timeline management","safety compliance approach","handling design constraints","cross-functional collaboration","technical documentation","quality assurance approach","unexpected project changes","engineering tools expertise","client requirements translation"]
+    tech:["a specific project you built and your role","your debugging approach when something breaks","system design or architecture thinking","why you chose a particular tech stack","handling technical debt in a codebase","your code review process","how you learn new technologies quickly","performance optimization you have done","teamwork conflict on a technical project","handling a production incident or outage","a time you refactored legacy code","your experience with version control workflows","how you prioritize tasks with tight deadlines","a challenging bug you solved recently","your experience with testing and QA","how you handle ambiguous requirements","a feature you designed end to end","your approach to documentation","how you stay updated with industry trends","experience mentoring or helping junior developers"],
+    banking:["financial analysis you performed","your risk management approach","handling a difficult client relationship","regulatory compliance challenge you faced","attention to detail in financial reporting","a data-driven decision you made","working under market pressure or deadlines","building a financial model","communicating complex findings to stakeholders","fraud detection or prevention experience","portfolio management approach","your experience with auditing processes","handling confidential financial information","a time you identified cost savings","cross-department collaboration in finance","your approach to financial forecasting","dealing with regulatory changes","client onboarding experience","investment analysis methodology","handling discrepancies in financial records"],
+    healthcare:["handling a difficult patient situation","working under clinical pressure","multidisciplinary team collaboration","patient privacy and ethical dilemma","keeping up with medical developments","managing emotional demands of healthcare","clinical documentation best practices","responding to a medical error","patient education approach you used","triage and prioritization under pressure","infection control experience","handling family members of patients","adapting to new medical technology","a time you advocated for a patient","managing workload during staff shortages","your approach to continuing education","handling a disagreement with a colleague","experience with electronic health records","cultural sensitivity in patient care","emergency response situation you handled"],
+    education:["your classroom management approach","handling a disruptive student situation","curriculum design experience","communicating with difficult parents","inclusive teaching methods you use","your student assessment approach","professional development that changed your teaching","integrating technology in your classroom","supporting diverse learners effectively","motivating a disengaged student","differentiating instruction for varied levels","handling bullying or conflict between students","collaborating with other teachers","adapting lessons when plans fail","your approach to homework and grading","building relationships with students","teaching a concept students struggle with","using data to improve instruction","creating a positive classroom culture","handling administrative pressures while teaching"],
+    engineering:["a complex engineering problem you solved","managing project timelines and delays","your safety compliance approach","working within tight design constraints","cross-functional team collaboration","technical documentation practices","your quality assurance methodology","handling unexpected project scope changes","engineering tools and software expertise","translating client requirements to specs","failure analysis you conducted","your approach to prototyping","cost estimation for engineering projects","environmental considerations in your work","experience with regulatory standards","a design trade-off decision you made","field testing or commissioning experience","handling vendor or supplier issues","your approach to continuous improvement","risk assessment in engineering projects"]
   };
-  const t = (topics[selIndustry]||topics.tech).sort(()=>Math.random()-.5).slice(0,5).join(", ");
+  const previousQuestions = allAnswers.map(a => a.question).join(" | ");
+  const pool = topics[selIndustry] || topics.tech;
+  // Shuffle with session seed + current question number for unique selection
+  const shuffled = pool.slice().sort(() => Math.sin(sessionSeed + currentQ * 137.5 + Math.random()) - 0.5);
+  const picked = shuffled.slice(0, 5).join(", ");
   return `You are a professional HR interviewer at a top ${IND_LABELS[selIndustry]} company. Technical interview phase for ${LVL_LABELS[selLevel]} candidate.
-RULES: ONE question only. Max 2 sentences. Completely different from all previous questions. Acknowledge in 1-3 words only. Never praise. Topics: ${t}. Seed: ${sessionSeed}. Generate fresh unique questions every session.`;
+RULES: Ask exactly ONE question. Max 2 sentences. Acknowledge their previous answer in 1-3 words only (no praise).
+CRITICAL — DO NOT repeat or rephrase any of these already-asked questions: [${previousQuestions}]
+Your question MUST be about a DIFFERENT topic. Pick from: ${picked}.
+Question number ${currentQ + 1} of ${totalQ}. Be creative and specific.`;
 }
 
 // ─── OPENAI API ──────────────────────────────────────
@@ -1621,6 +1628,8 @@ function startWebSpeechRecognition() {
   speechRecognition.maxAlternatives = 1;
 
   let finalTranscript = '';
+  let lastResultTime = Date.now();
+  let hasInterim = false;
 
   speechRecognition.onstart = () => {
     document.getElementById('itz-text').innerHTML =
@@ -1631,7 +1640,9 @@ function startWebSpeechRecognition() {
     if (!isListening) return;
 
     let interim = '';
-    for (let i = event.resultIndex; i < event.results.length; i++) {
+    // Rebuild finalTranscript from ALL final results to prevent disappearing text
+    finalTranscript = '';
+    for (let i = 0; i < event.results.length; i++) {
       const t = event.results[i][0].transcript;
       if (event.results[i].isFinal) {
         finalTranscript += t + ' ';
@@ -1641,32 +1652,41 @@ function startWebSpeechRecognition() {
     }
 
     liveTranscript = (finalTranscript + interim).trim();
+    hasInterim = interim.length > 0;
+    lastResultTime = Date.now();
 
-    // ← THIS is what makes text appear live on screen
     if (liveTranscript) {
       document.getElementById('itz-text').textContent = liveTranscript;
       updateStats(liveTranscript);
       hasSpeechStarted = true;
 
-      // Reset the silence countdown every time new speech arrives
+      // Only start silence timer when there's NO interim (user actually stopped)
       clearTimeout(silenceTimer);
-      silenceTimer = setTimeout(() => {
-        if (isListening && hasSpeechStarted && !interviewDone) {
-          autoSubmitAnswer();
-        }
-      }, appSettings.silence); // 2000 / 3500 / 5000 ms — user's choice
+      if (!hasInterim) {
+        silenceTimer = setTimeout(() => {
+          // Double-check: if new results came in since timer started, skip
+          if (Date.now() - lastResultTime < appSettings.silence - 200) return;
+          if (isListening && hasSpeechStarted && !interviewDone) {
+            autoSubmitAnswer();
+          }
+        }, appSettings.silence);
+      }
     }
   };
 
-  // onspeechend fires when the user pauses — we use the timer above instead
-  // so we don't double-trigger. This is intentionally left empty.
   speechRecognition.onspeechend = () => {};
 
   speechRecognition.onend = () => {
-      if (isListening && !interviewDone && speechRecognition) {
-        try { speechRecognition.start(); } catch(e) {}
-      }
-    };
+    if (isListening && !interviewDone && speechRecognition) {
+      // Preserve finalTranscript across restarts by capturing it
+      const savedFinal = finalTranscript;
+      try {
+        speechRecognition.start();
+        // Restore after restart so text doesn't disappear
+        setTimeout(() => { finalTranscript = savedFinal; }, 50);
+      } catch(e) {}
+    }
+  };
 
   speechRecognition.onerror = (e) => {
     if (['no-speech', 'aborted'].includes(e.error)) return;
@@ -1680,7 +1700,7 @@ function startWebSpeechRecognition() {
     speechRecognition.start();
   } catch(e) {
     speechRecognition = null;
-    startWhisperRecording(); // fallback
+    startWhisperRecording();
   }
 }
 
@@ -1895,17 +1915,21 @@ async function getReport() {
     `Q${i+1}: ${a.question}\nAnswer: ${a.answer}\nWords: ${a.words}, Fillers: ${a.fillers}`
   ).join("\n\n");
 
-  const scoring = `CRITICAL SCORING — follow strictly:
-SKIPPED or "(No answer — skipped)" or 0 words: score MUST be 0-5. This is non-negotiable. No answer = near-zero score.
-1-5 words: score 5-20. 6-15 words: 20-38. 16-35 words: 35-55. 36-70 words: 52-70. 71-120 words structured: 68-85. 120+ words expert detailed: 82-98.
-Each filler word: -3 fluency. Vague/generic: -15 content. Specific examples/STAR method: +15 content.
-NEVER give everyone 65. Differentiate based on actual answer quality. A 5-word answer MUST score below 30. A skipped answer MUST score below 5.`;
+  const scoring = `CRITICAL SCORING — you MUST differentiate scores based on CONTENT QUALITY, not just length.
+  SKIPPED or "(No answer — skipped)" or 0 words: overallScore MUST be 0-5.
+  BAD answer (vague, off-topic, no examples, generic): 15-35 regardless of length.
+  DECENT answer (somewhat relevant, basic understanding): 40-58.
+  GOOD answer (relevant, shows understanding, some specifics): 60-75.
+  STRONG answer (detailed, specific examples, well-structured, STAR method): 76-88.
+  EXPERT answer (exceptional depth, multiple examples, industry knowledge): 89-98.
+  IMPORTANT: Judge the SUBSTANCE of what was said. A long rambling answer with no real content scores LOW (25-40). A concise answer with specific examples scores HIGH (70-85). Filler words (um, uh, basically, literally): each one reduces fluencyScore by 4. The transcript is from speech recognition so ignore missing punctuation — focus on the IDEAS expressed.
+  You MUST vary scores. Do NOT default to 60-65. Read each answer carefully and score based on its actual merit.`;
 
   const prompt = `Evaluate this ${LVL_LABELS[selLevel]} ${IND_LABELS[selIndustry]} interview.
 ${scoring}
 ANSWERS:\n${aText}
 Return ONLY raw JSON no markdown:
-{"overallScore":62,"communicationScore":58,"contentScore":65,"confidenceScore":60,"fluencyScore":68,"grade":"Fair","strength":"specific strength","weakness":"specific weakness","improvements":["tip1","tip2","tip3"],"answerFeedback":[{"score":62,"note":"specific feedback"}]}
+{"overallScore":73,"communicationScore":70,"contentScore":76,"confidenceScore":68,"fluencyScore":80,"grade":"Good","strength":"specific strength","weakness":"specific weakness","improvements":["tip1","tip2","tip3"],"answerFeedback":[{"score":73,"note":"specific feedback"}]}
 Grade: Excellent(85+)/Good(65-84)/Fair(40-64)/Needs Work(<40). answerFeedback: exactly ${allAnswers.length} items.`;
 
   for (let attempt=1; attempt<=3; attempt++) {
@@ -1920,7 +1944,7 @@ Grade: Excellent(85+)/Good(65-84)/Fair(40-64)/Needs Work(<40). answerFeedback: e
         body: JSON.stringify({
           model: OPENAI_MODEL,
           max_tokens: 1000,
-          temperature: 0.1,
+          temperature: 0.4,
           messages: [{ role: "user", content: prompt }]
         })
       });
@@ -2543,7 +2567,6 @@ function initDashParticles() {
   }
   draw();
 }
-
 // ─── REMOVE AVATAR ──────────────────────────────────
 function removeAvatar() {
   try { localStorage.removeItem("iai-avatar"); } catch(e) {}
@@ -2570,10 +2593,10 @@ function removeAvatar() {
     const name = currentUser?.user_metadata?.full_name || currentUser?.email?.split("@")[0] || "User";
     swAv.textContent = name[0].toUpperCase();
     swAv.querySelectorAll("img").forEach(i => i.remove());
+      }
     }
-  }
 
-  async function unlockAudioForIOS() {
+    async function unlockAudioForIOS() {
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
     const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
     if (!isIOS && !isSafari) return;

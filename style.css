@@ -1531,6 +1531,7 @@ body{background:var(--bg);color:var(--txt);font-size:15px;line-height:1.6;transi
 .prem-lvl-card:hover { border-color:var(--bdr2); transform:translateX(5px); }
 .prem-lvl-card.selected { border-color:var(--cr2); background:rgba(192,36,63,.06); box-shadow:0 0 16px rgba(192,36,63,.12); }
 .prem-lvl-card.selected::before { opacity:1; }
+.plc-em { position:relative; z-index:1; }
 .plc-name { font-size:13px; font-weight:700; margin-bottom:2px; }
 .plc-sub { font-size:11px; color:var(--txt2); }
 .plc-check { margin-left:auto; font-size:13px; color:var(--cr2); font-weight:800; opacity:0; transition:.15s; }
