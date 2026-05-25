@@ -602,13 +602,13 @@ function _drawHDChart(canvasId, pts, lineColor, glowHex, isAvg) {
   ctx.clearRect(0, 0, W, H);
 
     const isDark = document.documentElement.getAttribute("data-theme") !== "light";
-    const txtColor = isDark ? "rgba(253,240,234,0.50)" : "rgba(28,6,8,0.55)";
-    const txtFaint = isDark ? "rgba(253,240,234,0.24)" : "rgba(28,6,8,0.35)";
-    const gridColor = isDark ? "rgba(192,36,63,0.07)" : "rgba(192,36,63,0.12)";
-    const gridZero = isDark ? "rgba(192,36,63,0.22)" : "rgba(192,36,63,0.25)";
-    const labelColor = isDark ? "rgba(253,240,234,0.20)" : "rgba(28,6,8,0.40)";
-    const emptyColor = isDark ? "rgba(253,240,234,0.18)" : "rgba(28,6,8,0.3)";
-    const dotBg = isDark ? "rgba(10,4,7,0.97)" : "rgba(255,255,255,0.97)";
+        const txtColor = isDark ? "rgba(253,240,234,0.50)" : "rgba(28,6,8,0.75)";
+        const txtFaint = isDark ? "rgba(253,240,234,0.24)" : "rgba(28,6,8,0.50)";
+        const gridColor = isDark ? "rgba(192,36,63,0.07)" : "rgba(120,40,60,0.15)";
+        const gridZero = isDark ? "rgba(192,36,63,0.22)" : "rgba(120,40,60,0.30)";
+        const labelColor = isDark ? "rgba(253,240,234,0.20)" : "rgba(28,6,8,0.60)";
+        const emptyColor = isDark ? "rgba(253,240,234,0.18)" : "rgba(28,6,8,0.45)";
+        const dotBg = isDark ? "rgba(10,4,7,0.97)" : "rgba(255,255,255,0.95)";
 
     // Empty state
     if (!pts.length) {
