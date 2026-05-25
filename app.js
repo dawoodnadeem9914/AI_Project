@@ -230,7 +230,7 @@ function applyFontSize(size) {
   if (size === "large") {
     s.textContent = `body { font-size: 19px !important; }`;
   } else {
-    s.textContent = "body { font-size: 15px !important; }";
+    s.textContent = "body { font-size: 12px !important; }";
   }
 }
 
