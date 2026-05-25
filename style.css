@@ -83,7 +83,7 @@ body{font-family:'DM Sans',system-ui,sans-serif;min-height:100vh;-webkit-font-sm
   color-scheme: light;
 }
 
-body{background:var(--bg);color:var(--txt);font-size:17px;line-height:1.6;transition:font-size .2s}
+body{background:var(--bg);color:var(--txt);font-size:15px;line-height:1.6;transition:font-size .2s}
 
 /* Large font size option */
 [data-fontsize="large"]{font-size:19px}
