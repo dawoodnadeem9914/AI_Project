@@ -1240,7 +1240,7 @@ async function startInterview() {
   currentQ=0; allAnswers=[]; convoHistory=[]; liveTranscript="";
   fillerCount=0; wordCount=0; isListening=false; interviewDone=false;
   sessionOwnerKey = getSessionsKey();
-  isPaused=false; warmupDone=false; warmupTurns=0;
+  isPaused=false; warmupDone=false; warmupTurns=0; interviewStarted=false;
   sessionSeed=Date.now(); currentAudio=null; currentUtt=null;
 
   document.getElementById("sb-industry").textContent = IND_LABELS[selIndustry];
@@ -1259,8 +1259,10 @@ async function startInterview() {
 }
 
 // ─── INTERVIEW FLOW ──────────────────────────────────
+let interviewStarted = false;
 async function beginInterview() {
-  if (convoHistory.length > 0) return;
+  if (convoHistory.length > 0 || interviewStarted) return;
+  interviewStarted = true;
   setSbStatus("thinking","AI is preparing...");
   showTyping();
   const kickoff = [{ role:"user", parts:[{ text:"Start the interview now. Say hello and ask how the candidate is doing." }] }];
@@ -1273,7 +1275,11 @@ async function beginInterview() {
   await typewriterMsg("ai", reply);
   await speakText(reply);
   setPauseState(false);
-  if (!interviewDone) { setSbStatus("listening","Listening..."); startListening(); }
+  if (!interviewDone) {
+    setSbStatus("listening","Listening...");
+    await sleep(1200);
+    if (!interviewDone) startListening();
+  }
 }
 
 async function handleAnswer(answer) {
@@ -1349,7 +1355,11 @@ async function handleAnswer(answer) {
   await speakText(reply);
   setPauseState(false);
   await sleep(3000);
-    if (!interviewDone) { setSbStatus('listening', 'Listening...'); startListening(); }
+  if (!interviewDone) {
+    setSbStatus('listening', 'Listening...');
+    await sleep(800);
+    if (!interviewDone) startListening();
+  }
 }
 // ─── PROMPTS ─────────────────────────────────────────
 function buildWarmupPrompt() {
