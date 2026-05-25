@@ -1348,8 +1348,8 @@ async function handleAnswer(answer) {
   await typewriterMsg('ai', reply);
   await speakText(reply);
   setPauseState(false);
-  await sleep(2000);
-  if (!interviewDone) { setSbStatus('listening', 'Listening...'); startListening(); }
+  await sleep(3000);
+    if (!interviewDone) { setSbStatus('listening', 'Listening...'); startListening(); }
 }
 // ─── PROMPTS ─────────────────────────────────────────
 function buildWarmupPrompt() {
@@ -1814,6 +1814,8 @@ function browserSpeak(text) {
   return new Promise(r => {
     if (!window.speechSynthesis) { r(); return; }
     window.speechSynthesis.cancel();
+    isListening = false;
+    clearTimeout(silenceTimer);
 
     const speak = () => {
       currentUtt = new SpeechSynthesisUtterance(text);
