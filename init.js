@@ -1,4 +1,4 @@
-const SUPABASE_URL   = "https://fmujwjmkjeofxytxkpvw.supabase.co";
-const SUPABASE_KEY   = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZtdWp3am1ramVvZnh5dHhrcHZ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNjk5ODAsImV4cCI6MjA5NDk0NTk4MH0.1O4U2MmQPJadmLVXg6P_vmFJG5Aipoe_sguYcos77e0";
+const SUPABASE_URL   = "https://dlcgszsinmznnjljwijq.supabase.co";
+const SUPABASE_KEY   = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRsY2dzenNpbm16bm5qbGp3aWpxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk2ODkxMTYsImV4cCI6MjA5NTI2NTExNn0.iy_MNAKNWNge0gUCot-PtVkZdecfEKv3EeMdf86XheA";
 const OPENAI_KEY     = "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";   // 🔑 Paste your sk-... key here
-const ELEVENLABS_KEY = "sk_9f5c3cbbdb2cf631c173a61c65cdc8821f73bbf6606eabe6";
+const ELEVENLABS_KEY = "sk_5a298e232f808ad7260493b4389ac8e12f02247c727a2107";
