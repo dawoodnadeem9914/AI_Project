@@ -1267,7 +1267,7 @@ async function beginInterview() {
   await typewriterMsg("ai", reply);
   await speakText(reply);
   setPauseState(false);
-  await sleep(800);
+  await sleep(2000);
   if (!interviewDone) { setSbStatus("listening","Listening..."); startListening(); }
 }
 
@@ -1327,7 +1327,7 @@ async function handleAnswer(answer) {
   await typewriterMsg("ai", reply);
   await speakText(reply);
   setPauseState(false);
-  await sleep(800);
+  await sleep(2000);
   if (!interviewDone) { setSbStatus("listening","Listening..."); startListening(); }
 }
 
@@ -1584,10 +1584,10 @@ async function startWhisperRecording() {
     mediaRecorder.start(250);
 
     silenceTimer = setTimeout(() => {
-      if (isListening && !interviewDone && !isPaused) {
+      if (isListening && !interviewDone && !isPaused && audioChunks.length > 2) {
         manualSubmit();
       }
-    }, appSettings.silence + 5000);
+    }, appSettings.silence + 8000);
 
   } catch (e) {
     addErrMsg("Microphone access denied. Please allow mic access in your browser settings.");
