@@ -587,8 +587,6 @@ function _drawHDChart(canvasId, pts, lineColor, glowHex, isAvg) {
   const canvas = document.getElementById(canvasId);
   if (!canvas) return;
   const ctx = canvas.getContext("2d");
-
-  // True HD: cap dpr at 3 to avoid memory blowout on 4K
   const dpr = Math.min(window.devicePixelRatio || 1, 3);
   const container = canvas.parentElement;
   const W = Math.max(260, (container?.getBoundingClientRect().width || 500) - 48);
@@ -601,77 +599,59 @@ function _drawHDChart(canvasId, pts, lineColor, glowHex, isAvg) {
   ctx.scale(dpr, dpr);
   ctx.clearRect(0, 0, W, H);
 
-    const isDark = document.documentElement.getAttribute("data-theme") !== "light";
-        const txtColor = isDark ? "rgba(253,240,234,0.50)" : "rgba(28,6,8,0.75)";
-        const txtFaint = isDark ? "rgba(253,240,234,0.24)" : "rgba(28,6,8,0.50)";
-        const gridColor = isDark ? "rgba(192,36,63,0.07)" : "rgba(120,40,60,0.15)";
-        const gridZero = isDark ? "rgba(192,36,63,0.22)" : "rgba(120,40,60,0.30)";
-        const labelColor = isDark ? "rgba(253,240,234,0.20)" : "rgba(28,6,8,0.60)";
-        const emptyColor = isDark ? "rgba(253,240,234,0.18)" : "rgba(28,6,8,0.45)";
-        const dotBg = isDark ? "rgba(10,4,7,0.97)" : "rgba(255,255,255,0.95)";
+  const isDark = document.documentElement.getAttribute("data-theme") !== "light";
 
-    // Empty state
-    if (!pts.length) {
-      ctx.fillStyle = emptyColor;
-        ctx.font = "500 13px 'DM Sans', system-ui, sans-serif";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText("No sessions yet — start your first!", W / 2, H / 2);
+  if (!pts.length) {
+    ctx.fillStyle = isDark ? "rgba(253,240,234,0.25)" : "rgba(28,6,8,0.4)";
+    ctx.font = "500 13px 'DM Sans', system-ui, sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("No sessions yet", W / 2, H / 2);
     return;
   }
 
-  const padL = 44, padR = 22, padT = 24, padB = 52;
+  const padL = 38, padR = 18, padT = 32, padB = 48;
   const cW = W - padL - padR;
   const cH = H - padT - padB;
-
   const toX = i => padL + (pts.length > 1 ? (i / (pts.length - 1)) * cW : cW / 2);
   const toY = v => padT + cH - (Math.max(0, Math.min(100, v)) / 100) * cH;
 
-  // ── GRID ──────────────────────────────────────────────────────────────────
+  // Grid lines
+  const gridCol = isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.08)";
+  const labelCol = isDark ? "rgba(253,240,234,0.3)" : "rgba(28,6,8,0.5)";
   [0, 25, 50, 75, 100].forEach(v => {
     const y = toY(v);
-    ctx.save();
     ctx.beginPath();
-    ctx.setLineDash(v === 0 ? [] : [3, 9]);
-    ctx.strokeStyle = v === 0 ? gridZero : gridColor;
-    ctx.lineWidth = v === 0 ? 1 : 0.5;
+    ctx.setLineDash(v === 0 ? [] : [2, 6]);
+    ctx.strokeStyle = gridCol;
+    ctx.lineWidth = 0.5;
     ctx.moveTo(padL, y);
     ctx.lineTo(W - padR, y);
     ctx.stroke();
-    ctx.restore();
-
-    ctx.fillStyle = labelColor;
-        ctx.font = "500 9px 'DM Sans', system-ui, sans-serif";
-        ctx.textAlign = "right";
-        ctx.textBaseline = "middle";
-        ctx.fillText(v, padL - 7, y);
+    ctx.setLineDash([]);
+    ctx.fillStyle = labelCol;
+    ctx.font = "500 9px 'DM Sans', system-ui, sans-serif";
+    ctx.textAlign = "right";
+    ctx.textBaseline = "middle";
+    ctx.fillText(v, padL - 6, y);
   });
 
-  // ── BEZIER PATH BUILDER ────────────────────────────────────────────────────
+  // Build smooth bezier path
   function buildPath() {
     ctx.beginPath();
-    if (pts.length === 1) {
-      ctx.arc(toX(0), toY(pts[0].score), 5, 0, Math.PI * 2);
-      return;
-    }
+    if (pts.length === 1) { ctx.arc(toX(0), toY(pts[0].score), 4, 0, Math.PI * 2); return; }
     ctx.moveTo(toX(0), toY(pts[0].score));
     for (let i = 1; i < pts.length; i++) {
       const cpx = (toX(i - 1) + toX(i)) / 2;
-      ctx.bezierCurveTo(
-        cpx, toY(pts[i - 1].score),
-        cpx, toY(pts[i].score),
-        toX(i), toY(pts[i].score)
-      );
+      ctx.bezierCurveTo(cpx, toY(pts[i-1].score), cpx, toY(pts[i].score), toX(i), toY(pts[i].score));
     }
   }
 
-  // ── GRADIENT AREA FILL ────────────────────────────────────────────────────
+  // Area fill gradient
   if (pts.length > 1) {
     const grad = ctx.createLinearGradient(0, padT, 0, H - padB);
-    grad.addColorStop(0,   glowHex + "3C");
-    grad.addColorStop(0.55, glowHex + "10");
-    grad.addColorStop(1,   glowHex + "00");
-
+    grad.addColorStop(0, isDark ? glowHex + "30" : glowHex + "18");
+    grad.addColorStop(1, glowHex + "00");
     buildPath();
     ctx.lineTo(toX(pts.length - 1), H - padB);
     ctx.lineTo(toX(0), H - padB);
@@ -680,156 +660,110 @@ function _drawHDChart(canvasId, pts, lineColor, glowHex, isAvg) {
     ctx.fill();
   }
 
-  // ── WIDE GLOW HALO (soft outer glow) ─────────────────────────────────────
-  if (pts.length > 1) {
+  // Glow line (subtle)
+  if (pts.length > 1 && isDark) {
     ctx.save();
     buildPath();
-    ctx.strokeStyle = glowHex + "50";
-    ctx.lineWidth = 14;
+    ctx.strokeStyle = glowHex + "40";
+    ctx.lineWidth = 6;
     ctx.lineJoin = "round";
     ctx.lineCap = "round";
     ctx.shadowColor = glowHex;
-    ctx.shadowBlur = 32;
-    ctx.globalAlpha = 0.55;
+    ctx.shadowBlur = 12;
+    ctx.globalAlpha = 0.4;
     ctx.stroke();
     ctx.restore();
   }
 
-  // ── MEDIUM GLOW LAYER ─────────────────────────────────────────────────────
-  if (pts.length > 1) {
-    ctx.save();
-    buildPath();
-    ctx.strokeStyle = glowHex + "80";
-    ctx.lineWidth = 5;
-    ctx.lineJoin = "round";
-    ctx.lineCap = "round";
-    ctx.shadowColor = glowHex;
-    ctx.shadowBlur = 18;
-    ctx.globalAlpha = 0.7;
-    ctx.stroke();
-    ctx.restore();
-  }
-
-  // ── CRISP MAIN LINE ───────────────────────────────────────────────────────
+  // Main crisp line
   ctx.save();
   buildPath();
   ctx.strokeStyle = lineColor;
   ctx.lineWidth = 2.5;
   ctx.lineJoin = "round";
   ctx.lineCap = "round";
-  ctx.shadowColor = glowHex;
-  ctx.shadowBlur = 12;
+  if (isDark) { ctx.shadowColor = glowHex; ctx.shadowBlur = 6; }
   ctx.stroke();
   ctx.restore();
 
-  // ── DATA POINTS + BADGES ─────────────────────────────────────────────────
+  // Data points + badges
+  const dotBg = isDark ? "rgba(10,4,7,0.95)" : "rgba(255,255,255,0.95)";
+  const badgeBg = isAvg ? (isDark ? "rgba(61,153,112,0.95)" : "rgba(30,107,70,0.92)")
+                        : (isDark ? "rgba(192,36,63,0.95)" : "rgba(139,18,40,0.92)");
+
   pts.forEach((p, i) => {
     const x = toX(i);
     const y = toY(p.score);
-    const val = String(p.score);
 
-    // Large ripple halo
-    ctx.save();
+    // Dot outer ring
     ctx.beginPath();
-    ctx.arc(x, y, 14, 0, Math.PI * 2);
-    ctx.fillStyle = glowHex + "14";
-    ctx.shadowColor = glowHex;
-    ctx.shadowBlur = 22;
-    ctx.fill();
-    ctx.restore();
-
-    // Mid halo
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(x, y, 8, 0, Math.PI * 2);
-    ctx.fillStyle = glowHex + "22";
-    ctx.shadowColor = glowHex;
-    ctx.shadowBlur = 14;
-    ctx.fill();
-    ctx.restore();
-
-    // Dark ring background
-    ctx.beginPath();
-    ctx.arc(x, y, 6, 0, Math.PI * 2);
+    ctx.arc(x, y, 5, 0, Math.PI * 2);
     ctx.fillStyle = dotBg;
-        ctx.fill();
+    ctx.fill();
 
-    // Colored glowing inner dot
-    ctx.save();
+    // Dot inner colored
     ctx.beginPath();
-    ctx.arc(x, y, 3.8, 0, Math.PI * 2);
+    ctx.arc(x, y, 3, 0, Math.PI * 2);
     ctx.fillStyle = lineColor;
-    ctx.shadowColor = glowHex;
-    ctx.shadowBlur = 20;
     ctx.fill();
-    ctx.restore();
 
-    // ── SCORE BADGE ────────────────────────────────────────────────────────
-    ctx.font = "700 10px 'DM Sans', system-ui, sans-serif";
+    // Score badge
+    const val = String(p.score);
+    ctx.font = "700 9px 'DM Sans', system-ui, sans-serif";
     ctx.textAlign = "center";
-    const tw  = ctx.measureText(val).width;
-    const bW  = tw + 16;
-    const bH  = 19;
-    const bCY = y - 29;
+    const tw = ctx.measureText(val).width;
+    const bW = tw + 12;
+    const bH = 17;
+    const bY = y - 24;
 
-    // Badge glow behind
-    ctx.save();
-    roundRect(ctx, x - bW / 2 - 3, bCY - bH / 2 - 3, bW + 6, bH + 6, 12);
-    ctx.fillStyle = glowHex + "2A";
-    ctx.shadowColor = glowHex;
-    ctx.shadowBlur = 18;
-    ctx.fill();
-    ctx.restore();
-
-    // Badge pill
-    const badgeBg = isAvg ? "rgba(61,153,112,0.95)" : "rgba(192,36,63,0.96)";
-    roundRect(ctx, x - bW / 2, bCY - bH / 2, bW, bH, 10);
+    // Badge background
+    roundRect(ctx, x - bW/2, bY - bH/2, bW, bH, 8);
     ctx.fillStyle = badgeBg;
     ctx.fill();
 
-    // Connecting chevron arrow
+    // Badge arrow
     ctx.beginPath();
-    ctx.moveTo(x - 4, bCY + bH / 2);
-    ctx.lineTo(x, bCY + bH / 2 + 5);
-    ctx.lineTo(x + 4, bCY + bH / 2);
+    ctx.moveTo(x - 3, bY + bH/2);
+    ctx.lineTo(x, bY + bH/2 + 4);
+    ctx.lineTo(x + 3, bY + bH/2);
     ctx.closePath();
     ctx.fillStyle = badgeBg;
     ctx.fill();
 
-    // Badge number
+    // Badge text
     ctx.fillStyle = "#ffffff";
-    ctx.font = "700 10px 'DM Sans', system-ui, sans-serif";
-    ctx.textAlign = "center";
+    ctx.font = "700 9px 'DM Sans', system-ui, sans-serif";
     ctx.textBaseline = "middle";
-    ctx.fillText(val, x, bCY + 0.5);
+    ctx.fillText(val, x, bY);
 
-    // ── X-AXIS LABELS ──────────────────────────────────────────────────────
-    const d       = new Date(p.date);
-    const session = `#${i + 1}`;
+    // X-axis labels
+    const d = new Date(p.date);
     const dateStr = d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 
-    ctx.fillStyle    = txtColor;
-        ctx.font         = "700 9.5px 'DM Sans', system-ui, sans-serif";
-        ctx.textBaseline = "top";
-        ctx.fillText(session, x, H - padB + 9);
+    ctx.fillStyle = isDark ? "rgba(253,240,234,0.5)" : "rgba(28,6,8,0.65)";
+    ctx.font = "600 8.5px 'DM Sans', system-ui, sans-serif";
+    ctx.textBaseline = "top";
+    ctx.fillText(`#${i + 1}`, x, H - padB + 6);
 
-    ctx.fillStyle = txtFaint;
-        ctx.font      = "500 8px 'DM Sans', system-ui, sans-serif";
-        ctx.fillText(dateStr, x, H - padB + 23);
+    ctx.fillStyle = isDark ? "rgba(253,240,234,0.25)" : "rgba(28,6,8,0.4)";
+    ctx.font = "400 7.5px 'DM Sans', system-ui, sans-serif";
+    ctx.fillText(dateStr, x, H - padB + 19);
   });
 
   ctx.textBaseline = "alphabetic";
 }
 
-// ─── PUBLIC: SCORE TIMELINE ───────────────────────────────────────────────────
 function drawProgressChart(sessions) {
-  const pts = sessions.slice(-10);
+  // Always sort by date ascending so oldest=left, newest=right
+  const sorted = sessions.slice().sort((a,b) => a.date - b.date);
+  const pts = sorted.slice(-10);
   _drawHDChart("prog-chart", pts, "#e03050", "#e03050", false);
 }
 
 // ─── PUBLIC: AVERAGE TREND ────────────────────────────────────────────────────
 function drawAvgChart(sessions) {
-  const raw = sessions.slice(-10);
+  const sorted = sessions.slice().sort((a,b) => a.date - b.date);
+  const raw = sorted.slice(-10);
   let sum = 0;
   const pts = raw.map((p, i) => ({
     score: Math.round((sum += p.score) / (i + 1)),
@@ -951,9 +885,30 @@ function renderSessionCards(sessions) {
     const btn = document.createElement("div");
     btn.id = "sess-show-more";
     btn.style.cssText = "text-align:center;margin-top:20px";
-    btn.innerHTML = `<button onclick="sessShowCount+=6;filterSessions(false)" style="background:var(--bg3);border:1.5px solid var(--bdr2);color:var(--txt2);padding:10px 28px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:.2s">Show More (${remaining} remaining)</button>`;
+    btn.innerHTML = `<button onclick="showMoreSessions()" style="background:var(--bg3);border:1.5px solid var(--bdr2);color:var(--txt2);padding:10px 28px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:.2s">Show More (${remaining} remaining)</button>`;
     grid.parentElement.appendChild(btn);
   }
+}
+
+function showMoreSessions() {
+  sessShowCount += 6;
+  // Re-filter without resetting count
+  const search = (document.getElementById("sess-search")?.value || "").toLowerCase();
+  const all    = getSessions().slice().reverse();
+  const filtered = all.filter(s => {
+    const indMatch   = sessFilterInd === "all" || s.industry === sessFilterInd;
+    const label      = (IND_LABELS[s.industry]||"").toLowerCase();
+    const lvlLabel   = (LVL_LABELS[s.level]||"").toLowerCase();
+    const searchMatch = !search || label.includes(search) || lvlLabel.includes(search) ||
+                        String(s.score).includes(search) ||
+                        new Date(s.date).toLocaleDateString().includes(search);
+    let scoreMatch = true;
+    if (sessFilterScore === "excellent") scoreMatch = s.score >= 85;
+    else if (sessFilterScore === "good")  scoreMatch = s.score >= 65 && s.score < 85;
+    else if (sessFilterScore === "fair")  scoreMatch = s.score >= 40 && s.score < 65;
+    return indMatch && scoreMatch && searchMatch;
+  });
+  renderSessionCards(filtered);
 }
 
 function getSessionsKey() {
@@ -2676,4 +2631,3 @@ function removeAvatar() {
       }, { once: true });
     });
   }
-
