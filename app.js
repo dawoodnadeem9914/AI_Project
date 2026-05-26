@@ -857,14 +857,29 @@ function renderSessionCards(sessions) {
   }).join("");
 
   // Show "Show More" button if there are more sessions
-  if (sessions.length > sessShowCount) {
-    const remaining = sessions.length - sessShowCount;
-    const btn = document.createElement("div");
-    btn.id = "sess-show-more";
-    btn.style.cssText = "text-align:center;margin-top:20px";
-    btn.innerHTML = `<button onclick="showMoreSessions()" style="background:var(--bg3);border:1.5px solid var(--bdr2);color:var(--txt2);padding:10px 28px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:.2s">Show More (${remaining} remaining)</button>`;
-    grid.parentElement.appendChild(btn);
+    if (sessions.length > sessShowCount) {
+      const remaining = sessions.length - sessShowCount;
+      const btn = document.createElement("div");
+      btn.id = "sess-show-more";
+      btn.style.cssText = "text-align:center;margin-top:20px";
+      btn.innerHTML = `<button onclick="showMoreSessions()" style="background:var(--bg3);border:1.5px solid var(--bdr2);color:var(--txt2);padding:10px 28px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:.2s">Show More (${remaining} remaining)</button>`;
+      grid.parentElement.appendChild(btn);
+    }
+
+    // Show "Show Less" button if expanded beyond default
+    document.getElementById("sess-show-less")?.remove();
+    if (sessShowCount > 6 && sessions.length > 6) {
+      const lessBtn = document.createElement("div");
+      lessBtn.id = "sess-show-less";
+      lessBtn.style.cssText = "text-align:center;margin-top:10px";
+      lessBtn.innerHTML = `<button onclick="showLessSessions()" style="background:none;border:1.5px solid var(--bdr);color:var(--txt3);padding:8px 22px;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:.2s">Show Less</button>`;
+      grid.parentElement.appendChild(lessBtn);
+    }
   }
+
+function showLessSessions() {
+  sessShowCount = 6;
+  filterSessions(false);
 }
 
 function showMoreSessions() {
