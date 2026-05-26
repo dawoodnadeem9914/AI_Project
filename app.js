@@ -602,7 +602,7 @@ function _drawHDChart(canvasId, pts, lineColor, glowHex, isAvg) {
   const isDark = document.documentElement.getAttribute("data-theme") !== "light";
 
   if (!pts.length) {
-    ctx.fillStyle = isDark ? "rgba(253,240,234,0.25)" : "rgba(28,6,8,0.4)";
+    ctx.fillStyle = isDark ? "rgba(253,240,234,0.25)" : "rgba(28,6,8,0.45)";
     ctx.font = "500 13px 'DM Sans', system-ui, sans-serif";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
@@ -616,27 +616,23 @@ function _drawHDChart(canvasId, pts, lineColor, glowHex, isAvg) {
   const toX = i => padL + (pts.length > 1 ? (i / (pts.length - 1)) * cW : cW / 2);
   const toY = v => padT + cH - (Math.max(0, Math.min(100, v)) / 100) * cH;
 
-  // Grid lines
-  const gridCol = isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.08)";
-  const labelCol = isDark ? "rgba(253,240,234,0.3)" : "rgba(28,6,8,0.5)";
   [0, 25, 50, 75, 100].forEach(v => {
     const y = toY(v);
     ctx.beginPath();
     ctx.setLineDash(v === 0 ? [] : [2, 6]);
-    ctx.strokeStyle = gridCol;
+    ctx.strokeStyle = isDark ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.12)";
     ctx.lineWidth = 0.5;
     ctx.moveTo(padL, y);
     ctx.lineTo(W - padR, y);
     ctx.stroke();
     ctx.setLineDash([]);
-    ctx.fillStyle = labelCol;
+    ctx.fillStyle = isDark ? "rgba(253,240,234,0.3)" : "rgba(28,6,8,0.55)";
     ctx.font = "500 9px 'DM Sans', system-ui, sans-serif";
     ctx.textAlign = "right";
     ctx.textBaseline = "middle";
     ctx.fillText(v, padL - 6, y);
   });
 
-  // Build smooth bezier path
   function buildPath() {
     ctx.beginPath();
     if (pts.length === 1) { ctx.arc(toX(0), toY(pts[0].score), 4, 0, Math.PI * 2); return; }
@@ -647,10 +643,9 @@ function _drawHDChart(canvasId, pts, lineColor, glowHex, isAvg) {
     }
   }
 
-  // Area fill gradient
   if (pts.length > 1) {
     const grad = ctx.createLinearGradient(0, padT, 0, H - padB);
-    grad.addColorStop(0, isDark ? glowHex + "30" : glowHex + "18");
+    grad.addColorStop(0, isDark ? glowHex + "22" : glowHex + "20");
     grad.addColorStop(1, glowHex + "00");
     buildPath();
     ctx.lineTo(toX(pts.length - 1), H - padB);
@@ -660,54 +655,40 @@ function _drawHDChart(canvasId, pts, lineColor, glowHex, isAvg) {
     ctx.fill();
   }
 
-  // Glow line (subtle)
-  if (pts.length > 1 && isDark) {
-    ctx.save();
-    buildPath();
-    ctx.strokeStyle = glowHex + "40";
-    ctx.lineWidth = 6;
-    ctx.lineJoin = "round";
-    ctx.lineCap = "round";
-    ctx.shadowColor = glowHex;
-    ctx.shadowBlur = 12;
-    ctx.globalAlpha = 0.4;
-    ctx.stroke();
-    ctx.restore();
-  }
-
-  // Main crisp line
   ctx.save();
   buildPath();
-  ctx.strokeStyle = lineColor;
+  ctx.strokeStyle = isDark ? lineColor : (isAvg ? "#1a8a52" : "#c0243f");
   ctx.lineWidth = 2.5;
   ctx.lineJoin = "round";
   ctx.lineCap = "round";
-  if (isDark) { ctx.shadowColor = glowHex; ctx.shadowBlur = 6; }
   ctx.stroke();
   ctx.restore();
 
-  // Data points + badges
-  const dotBg = isDark ? "rgba(10,4,7,0.95)" : "rgba(255,255,255,0.95)";
-  const badgeBg = isAvg ? (isDark ? "rgba(61,153,112,0.95)" : "rgba(30,107,70,0.92)")
-                        : (isDark ? "rgba(192,36,63,0.95)" : "rgba(139,18,40,0.92)");
+  const dotBg = isDark ? "#0a0407" : "#ffffff";
+  const badgeColor = isAvg
+    ? (isDark ? "rgba(61,153,112,0.95)" : "rgba(20,100,60,0.95)")
+    : (isDark ? "rgba(192,36,63,0.95)" : "rgba(160,20,45,0.95)");
+  const dotColor = isDark ? lineColor : (isAvg ? "#1a8a52" : "#c0243f");
 
   pts.forEach((p, i) => {
     const x = toX(i);
     const y = toY(p.score);
 
-    // Dot outer ring
     ctx.beginPath();
     ctx.arc(x, y, 5, 0, Math.PI * 2);
     ctx.fillStyle = dotBg;
     ctx.fill();
-
-    // Dot inner colored
     ctx.beginPath();
-    ctx.arc(x, y, 3, 0, Math.PI * 2);
-    ctx.fillStyle = lineColor;
+    ctx.arc(x, y, 5, 0, Math.PI * 2);
+    ctx.strokeStyle = dotColor;
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(x, y, 2.5, 0, Math.PI * 2);
+    ctx.fillStyle = dotColor;
     ctx.fill();
 
-    // Score badge
     const val = String(p.score);
     ctx.font = "700 9px 'DM Sans', system-ui, sans-serif";
     ctx.textAlign = "center";
@@ -716,36 +697,32 @@ function _drawHDChart(canvasId, pts, lineColor, glowHex, isAvg) {
     const bH = 17;
     const bY = y - 24;
 
-    // Badge background
     roundRect(ctx, x - bW/2, bY - bH/2, bW, bH, 8);
-    ctx.fillStyle = badgeBg;
+    ctx.fillStyle = badgeColor;
     ctx.fill();
 
-    // Badge arrow
     ctx.beginPath();
     ctx.moveTo(x - 3, bY + bH/2);
     ctx.lineTo(x, bY + bH/2 + 4);
     ctx.lineTo(x + 3, bY + bH/2);
     ctx.closePath();
-    ctx.fillStyle = badgeBg;
+    ctx.fillStyle = badgeColor;
     ctx.fill();
 
-    // Badge text
     ctx.fillStyle = "#ffffff";
     ctx.font = "700 9px 'DM Sans', system-ui, sans-serif";
     ctx.textBaseline = "middle";
     ctx.fillText(val, x, bY);
 
-    // X-axis labels
     const d = new Date(p.date);
     const dateStr = d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 
-    ctx.fillStyle = isDark ? "rgba(253,240,234,0.5)" : "rgba(28,6,8,0.65)";
+    ctx.fillStyle = isDark ? "rgba(253,240,234,0.55)" : "rgba(28,6,8,0.7)";
     ctx.font = "600 8.5px 'DM Sans', system-ui, sans-serif";
     ctx.textBaseline = "top";
-    ctx.fillText(`#${i + 1}`, x, H - padB + 6);
+    ctx.fillText("#" + (i + 1), x, H - padB + 6);
 
-    ctx.fillStyle = isDark ? "rgba(253,240,234,0.25)" : "rgba(28,6,8,0.4)";
+    ctx.fillStyle = isDark ? "rgba(253,240,234,0.3)" : "rgba(28,6,8,0.45)";
     ctx.font = "400 7.5px 'DM Sans', system-ui, sans-serif";
     ctx.fillText(dateStr, x, H - padB + 19);
   });
