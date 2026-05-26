@@ -545,8 +545,8 @@ function renderSessionsPage() {
   if(smAvg)    smAvg.textContent    = avg   !== null ? avg   : "—";
   if(smStreak) smStreak.textContent = streak;
 
-  drawProgressChart(all);
-    drawAvgChart(all);
+  drawProgressChart(getSessions());
+      drawAvgChart(getSessions());
 
   filterSessions();
 }
@@ -823,13 +823,13 @@ function _drawHDChart(canvasId, pts, lineColor, glowHex, isAvg) {
 
 // ─── PUBLIC: SCORE TIMELINE ───────────────────────────────────────────────────
 function drawProgressChart(sessions) {
-  const pts = sessions.slice().reverse().slice(-10);
+  const pts = sessions.slice(-10);
   _drawHDChart("prog-chart", pts, "#e03050", "#e03050", false);
 }
 
 // ─── PUBLIC: AVERAGE TREND ────────────────────────────────────────────────────
 function drawAvgChart(sessions) {
-  const raw = sessions.slice().reverse().slice(-10);
+  const raw = sessions.slice(-10);
   let sum = 0;
   const pts = raw.map((p, i) => ({
     score: Math.round((sum += p.score) / (i + 1)),
@@ -840,8 +840,8 @@ function drawAvgChart(sessions) {
 
 // ═══════════════════════════════════════════════════════════════════════════════
 
-function filterSessions() {
-  sessShowCount = 6;
+function filterSessions(resetCount) {
+  if (resetCount !== false) sessShowCount = 6;
   const search = (document.getElementById("sess-search")?.value || "").toLowerCase();
   const all    = getSessions().slice().reverse();
 
@@ -951,7 +951,7 @@ function renderSessionCards(sessions) {
     const btn = document.createElement("div");
     btn.id = "sess-show-more";
     btn.style.cssText = "text-align:center;margin-top:20px";
-    btn.innerHTML = `<button onclick="sessShowCount+=6;filterSessions()" style="background:var(--bg3);border:1.5px solid var(--bdr2);color:var(--txt2);padding:10px 28px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:.2s">Show More (${remaining} remaining)</button>`;
+    btn.innerHTML = `<button onclick="sessShowCount+=6;filterSessions(false)" style="background:var(--bg3);border:1.5px solid var(--bdr2);color:var(--txt2);padding:10px 28px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:.2s">Show More (${remaining} remaining)</button>`;
     grid.parentElement.appendChild(btn);
   }
 }
@@ -1956,7 +1956,7 @@ async function getReport() {
 ${scoring}
 ANSWERS:\n${aText}
 Return ONLY raw JSON no markdown:
-{"overallScore":73,"communicationScore":70,"contentScore":76,"confidenceScore":68,"fluencyScore":80,"grade":"Good","strength":"specific strength","weakness":"specific weakness","improvements":["tip1","tip2","tip3"],"answerFeedback":[{"score":73,"note":"specific feedback"}]}
+{"overallScore":NUMBER,"communicationScore":NUMBER,"contentScore":NUMBER,"confidenceScore":NUMBER,"fluencyScore":NUMBER,"grade":"GRADE","strength":"describe actual strength","weakness":"describe actual weakness","improvements":["tip1","tip2","tip3"],"answerFeedback":[{"score":NUMBER,"note":"specific feedback per answer"}]}
 Grade: Excellent(85+)/Good(65-84)/Fair(40-64)/Needs Work(<40). answerFeedback: exactly ${allAnswers.length} items.`;
 
   for (let attempt=1; attempt<=3; attempt++) {
