@@ -455,7 +455,7 @@ async function sendResetEmail() {
   showLoad("Sending reset email...");
   const al = document.getElementById("security-alert");
   if (SUPABASE_CONFIGURED && sb) {
-    const { error } = await sb.auth.resetPasswordForEmail(currentUser.email);
+    const { error } = await sb.auth.resetPasswordForEmail(currentUser.email, { redirectTo: "https://dawoodnadeem9914.github.io/AI_Project/" });
     hideLoad();
     if (error) { al.textContent=error.message; al.className="st-alert"; al.classList.remove("hidden"); }
     else { al.textContent="✓ Reset email sent to "+currentUser.email; al.className="st-alert ok"; al.classList.remove("hidden"); }
@@ -1813,7 +1813,7 @@ function togglePause() {
 async function speakText(text) {
   if (interviewDone) return;
   stopListening();
-  if (!ELEVENLABS_KEY||ELEVENLABS_KEY==="paste-your-elevenlabs-key-here"||true) { await browserSpeak(text); return; }
+  if (!ELEVENLABS_KEY||ELEVENLABS_KEY==="paste-your-elevenlabs-key-here") { await browserSpeak(text); return; }
   try {
     const res = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${appSettings.voice}`, {
       method:"POST",
