@@ -1105,23 +1105,14 @@ async function previewVoice(voiceId, voiceName) {
   const sampleText = `Hello, I am ${voiceName}. I will be conducting your interview today. Shall we begin?`;
   const btn = document.querySelector(`[data-id="${voiceId}"] .vo-preview-btn`);
 
-  if (!ELEVENLABS_KEY || ELEVENLABS_KEY === "paste-your-elevenlabs-key-here") {
-    const cfg = VOICE_BROWSER_MAP[voiceId] || { gender:"female", pitch:1.0, rate:0.93 };
-    const utt = new SpeechSynthesisUtterance(sampleText);
-    utt.rate  = cfg.rate;
-    utt.pitch = cfg.pitch;
-    const pick = getBrowserVoice(cfg.gender);
-    if (pick) utt.voice = pick;
-    window.speechSynthesis.speak(utt);
-    return;
-  }
+  // Always try ElevenLabs proxy first — falls back to browser TTS on failure
 
   try {
     if (btn) btn.textContent = "⏳";
 
-    const res = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
-      method: "POST",
-      headers: { "Content-Type":"application/json", "xi-api-key":ELEVENLABS_KEY },
+    const res = await fetch(`${OPENAI_URL}/v1/text-to-speech/${voiceId}`, {
+          method: "POST",
+          headers: { "Content-Type":"application/json" },
       body: JSON.stringify({
         text: sampleText,
         model_id: "eleven_monolingual_v1",
@@ -1813,11 +1804,11 @@ function togglePause() {
 async function speakText(text) {
   if (interviewDone) return;
   stopListening();
-  if (!ELEVENLABS_KEY||ELEVENLABS_KEY==="paste-your-elevenlabs-key-here") { await browserSpeak(text); return; }
+  // Always try ElevenLabs proxy first — falls back to browserSpeak on failure
   try {
-    const res = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${appSettings.voice}`, {
-      method:"POST",
-      headers:{"Content-Type":"application/json","xi-api-key":ELEVENLABS_KEY},
+    const res = await fetch(`${OPENAI_URL}/v1/text-to-speech/${appSettings.voice}`, {
+          method:"POST",
+          headers:{"Content-Type":"application/json"},
       body:JSON.stringify({ text, model_id:"eleven_monolingual_v1", voice_settings:{ stability:.68, similarity_boost:.42, style:.0, use_speaker_boost:true } })
     });
     if (!res.ok) { await browserSpeak(text); return; }
