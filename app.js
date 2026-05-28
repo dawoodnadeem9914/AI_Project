@@ -7,6 +7,12 @@
 const OPENAI_URL   = "https://interview-ai-proxy.captaindawood14.workers.dev";
 const OPENAI_MODEL = "gpt-4o-mini";
 
+// ─── SAFE DEFAULTS (if init.js not loaded) ───────────
+if (typeof OPENAI_KEY === "undefined")    var OPENAI_KEY = "";
+if (typeof ELEVENLABS_KEY === "undefined") var ELEVENLABS_KEY = "";
+if (typeof SUPABASE_URL === "undefined")  var SUPABASE_URL = "https://dlcgszsinmznnljwijq.supabase.co";
+if (typeof SUPABASE_KEY === "undefined")  var SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRsY2dzenNpbm16bm5qbGp3aWpxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk2ODkxMTYsImV4cCI6MjA5NTI2NTExNn0.iy_MNAKNWNge0gUCot-PtVkZdecfEKv3EeMdf86XheA";
+
 // ─── SETTINGS STATE ──────────────────────────────────
 let appSettings = {
   voice:    "pNInz6obpgDQGcFmaJgB",
