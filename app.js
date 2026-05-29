@@ -5,7 +5,6 @@
 
 
 const OPENAI_URL   = "https://interview-ai-proxy.captaindawood14.workers.dev";
-if (typeof SUPABASE_URL === "undefined")  var SUPABASE_URL = "https://dlcgszsinmznnljwijq.supabase.co";
 
 // ─── SETTINGS STATE ──────────────────────────────────
 let appSettings = {
