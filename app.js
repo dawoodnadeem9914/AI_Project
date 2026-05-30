@@ -173,13 +173,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
         const rf = document.getElementById("form-reset");
         if (rf) { rf.classList.remove("ap-hidden","hidden"); rf.style.display = ""; rf.classList.add("slide-in"); }
-      } else if (event === "SIGNED_IN" && session && !currentUser && !manualLoginInProgress) {
-              currentUser = session.user;
-              upsertSavedAccount(session.user, session);
-              await loadSettings();
-              applySettings();
-              initDashboard();
-              loadStoredAvatar();
+      } else if (event === "SIGNED_IN" && session && !currentUser) {
+              // Handled by handleLogin or getSession below
             }
     });
   }
