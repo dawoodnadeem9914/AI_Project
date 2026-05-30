@@ -378,10 +378,11 @@ async function handleLogin() {
 
   manualLoginInProgress = true;
     setBtnLoading("login-btn","login-spin",true,"Sign In");
+    await sleep(50);
 
-  let data, error;
-  if (SUPABASE_CONFIGURED && sb) {
-    const res = await sb.auth.signInWithPassword({ email, password:pass });
+    let data, error;
+    if (SUPABASE_CONFIGURED && sb) {
+      const res = await sb.auth.signInWithPassword({ email, password:pass });
     data = res.data; error = res.error;
   } else {
     const res = demoLogin(email, pass);
@@ -391,7 +392,7 @@ async function handleLogin() {
 
   setBtnLoading("login-btn","login-spin",false,"Sign In");
 
-  if (error) { showAuthAlert("login-alert",error.message); return; }
+  if (error) { manualLoginInProgress = false; showAuthAlert("login-alert",error.message); return; }
     currentUser = data.user;
     if (SUPABASE_CONFIGURED && sb) {
       const { data: sessData } = await sb.auth.getSession();
