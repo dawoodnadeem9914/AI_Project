@@ -138,6 +138,7 @@ let warmupDone      = false;
 let warmupTurns     = 0;
 let sessionSeed     = 0;
 let pendingConfirm  = null;
+let manualLoginInProgress = false;
 let speechRecognition = null;
 let mediaRecorder   = null;
 let recordingStream = null;
@@ -172,7 +173,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
         const rf = document.getElementById("form-reset");
         if (rf) { rf.classList.remove("ap-hidden","hidden"); rf.style.display = ""; rf.classList.add("slide-in"); }
-      } else if (event === "SIGNED_IN" && session && !currentUser) {
+      } else if (event === "SIGNED_IN" && session && !currentUser && !manualLoginInProgress) {
               currentUser = session.user;
               upsertSavedAccount(session.user, session);
               await loadSettings();
@@ -375,7 +376,8 @@ async function handleLogin() {
   document.getElementById("login-alert").classList.add("hidden");
   if (!email||!pass) { showAuthAlert("login-alert","Please fill in all fields."); return; }
 
-  setBtnLoading("login-btn","login-spin",true,"Sign In");
+  manualLoginInProgress = true;
+    setBtnLoading("login-btn","login-spin",true,"Sign In");
 
   let data, error;
   if (SUPABASE_CONFIGURED && sb) {
@@ -414,6 +416,7 @@ async function handleLogin() {
         applySettings();
         initDashboard();
         loadStoredAvatar();
+        manualLoginInProgress = false;
     }
 
 // ─── REGISTER ────────────────────────────────────────
