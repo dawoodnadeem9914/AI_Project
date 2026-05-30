@@ -468,6 +468,13 @@ async function sendResetEmail() {
 }
 
 async function handleLogout() {
+  // Save avatar to accounts store BEFORE clearing it
+  if (currentUser) {
+    const avatar = localStorage.getItem("iai-avatar") || null;
+    const accs = getSavedAccounts();
+    const idx = accs.findIndex(a => a.id === currentUser.id);
+    if (idx >= 0) { accs[idx].avatar = avatar; saveAccountsStore(accs); }
+  }
   if (SUPABASE_CONFIGURED && sb) await sb.auth.signOut();
   currentUser = null;
   localStorage.removeItem("iai-avatar");
