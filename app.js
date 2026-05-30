@@ -371,16 +371,20 @@ async function handleLogin() {
   setBtnLoading("login-btn","login-spin",false,"Sign In");
 
   if (error) { showAuthAlert("login-alert",error.message); return; }
-  currentUser = data.user;
-  if (SUPABASE_CONFIGURED && sb) {
-    const { data: sessData } = await sb.auth.getSession();
-    upsertSavedAccount(data.user, sessData?.session);
-  } else {
-    upsertSavedAccount(data.user, null);
-  }
-  localStorage.removeItem("iai-avatar");
+    currentUser = data.user;
     const _acc = getSavedAccounts().find(a => a.id === data.user.id);
-    if (_acc?.avatar) localStorage.setItem("iai-avatar", _acc.avatar);
+    const _savedAvatar = _acc?.avatar || null;
+    if (SUPABASE_CONFIGURED && sb) {
+      const { data: sessData } = await sb.auth.getSession();
+      upsertSavedAccount(data.user, sessData?.session);
+    } else {
+      upsertSavedAccount(data.user, null);
+    }
+    if (_savedAvatar) {
+      localStorage.setItem("iai-avatar", _savedAvatar);
+    } else {
+      localStorage.removeItem("iai-avatar");
+    }
     initDashboard();
     loadStoredAvatar();
 }
