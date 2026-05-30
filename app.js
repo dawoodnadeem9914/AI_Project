@@ -1941,8 +1941,8 @@ Grade: Excellent(85+)/Good(65-84)/Fair(40-64)/Needs Work(<40). answerFeedback: e
       if (data.error) { if(attempt<3){await sleep(3500);continue;} throw new Error(data.error.message); }
       let raw = data.choices[0].message.content.trim().replace(/```json|```/g,"").trim();
       const report = JSON.parse(raw);
-      saveSession(report.overallScore);
-      hideLoad(); renderResults(report); return;
+            await saveSession(report.overallScore);
+            hideLoad(); renderResults(report); return;
     } catch(e) {
       if (attempt<3) { await sleep(3500); continue; }
       const avgW=allAnswers.reduce((s,a)=>s+a.words,0)/allAnswers.length;
@@ -1950,9 +1950,9 @@ Grade: Excellent(85+)/Good(65-84)/Fair(40-64)/Needs Work(<40). answerFeedback: e
       let base = avgW<1?5:avgW<6?15:avgW<16?32:avgW<36?48:avgW<71?62:avgW<121?76:88;
       base = Math.max(10,Math.round(base-avgF*3));
       const gr = base>=85?"Excellent":base>=65?"Good":base>=40?"Fair":"Needs Work";
-      saveSession(base);
-      hideLoad();
-      renderResults({ overallScore:base, communicationScore:Math.round(base-4), contentScore:Math.round(base+3), confidenceScore:Math.round(base-2), fluencyScore:Math.max(10,Math.round(base-avgF*4)), grade:gr,
+      await saveSession(base);
+            hideLoad();
+            renderResults({ overallScore:base, communicationScore:Math.round(base-4), contentScore:Math.round(base+3), confidenceScore:Math.round(base-2), fluencyScore:Math.max(10,Math.round(base-avgF*4)), grade:gr,
         strength:"Interview session completed.", weakness:"AI analysis unavailable — score estimated from response length and fluency.",
         improvements:["Speak in full detailed sentences","Use the STAR method for behavioural questions","Pause instead of using filler words"],
         answerFeedback:allAnswers.map(a=>({ score:Math.max(0,Math.round((a.words<1?3:a.words<6?15:a.words<16?30:a.words<36?45:60)-a.fillers*3)), note:a.words<1?`Skipped — no answer provided.`:`${a.words} words, ${a.fillers} fillers.` }))
@@ -2007,7 +2007,7 @@ function renderResults(r) {
       </div></div>`;
   }).join("");
 
-  loadDashStats(); loadRecentSessions();
+  setTimeout(() => { loadDashStats(); loadRecentSessions(); }, 500);
 }
 
 function setRb(id,val) {
