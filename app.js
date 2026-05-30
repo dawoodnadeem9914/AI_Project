@@ -410,11 +410,11 @@ async function handleLogin() {
       if (_acc?.avatar) localStorage.setItem("iai-avatar", _acc.avatar);
       else localStorage.removeItem("iai-avatar");
     }
-    initDashboard();
-        loadStoredAvatar();
-        await loadSettings();
+    await loadSettings();
         applySettings();
-      }
+        initDashboard();
+        loadStoredAvatar();
+    }
 
 // ─── REGISTER ────────────────────────────────────────
 async function handleRegister() {
