@@ -196,25 +196,23 @@ function applySettings() {
     });
   }
 
-function toggleTheme() {
+async function toggleTheme() {
   appSettings.theme = appSettings.theme === "dark" ? "light" : "dark";
   saveSettings();
   applySettings();
-  // Redraw charts if sessions view is visible
   if (document.getElementById("dash-sessions-view")?.style.display !== "none") {
-    const all = getSessions();
+    const all = await getSessions();
     drawProgressChart(all);
     drawAvgChart(all);
   }
 }
 
-function setTheme(t) {
+async function setTheme(t) {
   appSettings.theme = t;
   saveSettings();
   applySettings();
-  // Redraw charts if sessions view is visible
   if (document.getElementById("dash-sessions-view")?.style.display !== "none") {
-    const all = getSessions();
+    const all = await getSessions();
     drawProgressChart(all);
     drawAvgChart(all);
   }
@@ -491,8 +489,8 @@ function initDashboard() {
   initDashParticles();
 }
 
-function loadDashStats() {
-  const sessions = getSessions();
+async function loadDashStats() {
+  const sessions = await getSessions();
   const total = sessions.length;
   const best  = total ? Math.max(...sessions.map(s=>s.score)) : null;
   const avg   = total ? Math.round(sessions.reduce((a,s)=>a+s.score,0)/total) : null;
@@ -521,17 +519,15 @@ let sessFilterInd   = "all";
 let sessFilterScore = "all";
 let sessSearchTerm  = "";
 
-function goToSessions() {
+async function goToSessions() {
   document.getElementById("dash-home-view").style.display   = "none";
   document.getElementById("dash-sessions-view").style.display = "";
   document.querySelectorAll(".pnl-btn").forEach(b=>b.classList.remove("active"));
   document.querySelectorAll(".pnl-btn")[1]?.classList.add("active");
   renderSessionsPage();
-  requestAnimationFrame(() => {
-      const all = getSessions();
-      drawProgressChart(all);
-      drawAvgChart(all);
-    });
+  const all = await getSessions();
+  drawProgressChart(all);
+  drawAvgChart(all);
 }
 
 function showDashHome() {
@@ -541,8 +537,8 @@ function showDashHome() {
   document.querySelectorAll(".pnl-btn")[0]?.classList.add("active");
 }
 
-function renderSessionsPage() {
-  const all = getSessions().slice().reverse();
+async function renderSessionsPage() {
+  const all = (await getSessions()).slice().reverse();
 
   const total  = all.length;
   const best   = total ? Math.max(...all.map(s=>s.score)) : null;
@@ -557,9 +553,9 @@ function renderSessionsPage() {
   if(smAvg)    smAvg.textContent    = avg   !== null ? avg   : "—";
   if(smStreak) smStreak.textContent = streak;
 
-  drawProgressChart(getSessions());
-      drawAvgChart(getSessions());
-
+  const allSess = await getSessions();
+  drawProgressChart(allSess);
+  drawAvgChart(allSess);
   filterSessions();
 }
 
@@ -763,10 +759,10 @@ function drawAvgChart(sessions) {
 
 // ═══════════════════════════════════════════════════════════════════════════════
 
-function filterSessions(resetCount) {
+async function filterSessions(resetCount) {
   if (resetCount !== false) sessShowCount = 6;
   const search = (document.getElementById("sess-search")?.value || "").toLowerCase();
-  const all    = getSessions().slice().reverse();
+  const all    = (await getSessions()).slice().reverse();
 
   const filtered = all.filter(s => {
     const indMatch   = sessFilterInd   === "all" || s.industry === sessFilterInd;
@@ -894,11 +890,10 @@ function showLessSessions() {
   filterSessions(false);
 }
 
-function showMoreSessions() {
+async function showMoreSessions() {
   sessShowCount += 6;
-  // Re-filter without resetting count
   const search = (document.getElementById("sess-search")?.value || "").toLowerCase();
-  const all    = getSessions().slice().reverse();
+  const all    = (await getSessions()).slice().reverse();
   const filtered = all.filter(s => {
     const indMatch   = sessFilterInd === "all" || s.industry === sessFilterInd;
     const label      = (IND_LABELS[s.industry]||"").toLowerCase();
@@ -987,7 +982,8 @@ function loadSettingsPage() {
   document.getElementById("st-avatar-email").textContent = email;
   if(document.getElementById("st-name")) document.getElementById("st-name").value = name;
   if(document.getElementById("st-email")) document.getElementById("st-email").value = email;
-  document.getElementById("acc-sessions").textContent = getSessions().length;
+  document.getElementById("acc-sessions").textContent = "...";
+  getSessions().then(s => { document.getElementById("acc-sessions").textContent = s.length; });
 
   document.querySelectorAll(".voice-opt").forEach(o=>{
     const isSelected = o.dataset.id === (appSettings.voice || "pNInz6obpgDQGcFmaJgB");
