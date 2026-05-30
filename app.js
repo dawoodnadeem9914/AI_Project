@@ -15,14 +15,29 @@ let appSettings = {
   fontSize: "normal"
 };
 
-function loadSettings() {
+async function loadSettings() {
   try {
     const s = JSON.parse(localStorage.getItem("iai-settings") || "{}");
     appSettings = { ...appSettings, ...s };
   } catch(e) {}
+  if (SUPABASE_CONFIGURED && sb && currentUser) {
+    const { data: profile } = await sb.from("profiles")
+      .select("settings").eq("id", currentUser.id).single();
+    if (profile?.settings) {
+      appSettings = { ...appSettings, ...profile.settings };
+      applySettings();
+    }
+  }
 }
 function saveSettings() {
   try { localStorage.setItem("iai-settings", JSON.stringify(appSettings)); } catch(e) {}
+  if (SUPABASE_CONFIGURED && sb && currentUser) {
+    sb.from("profiles").upsert({
+      id: currentUser.id,
+      settings: appSettings,
+      updated_at: new Date().toISOString()
+    });
+  }
 }
 
 // ─── SUPABASE ────────────────────────────────────────
@@ -392,8 +407,10 @@ async function handleLogin() {
       else localStorage.removeItem("iai-avatar");
     }
     initDashboard();
-    loadStoredAvatar();
-  }
+        loadStoredAvatar();
+        await loadSettings();
+        applySettings();
+      }
 
 // ─── REGISTER ────────────────────────────────────────
 async function handleRegister() {
@@ -509,14 +526,19 @@ function initDashboard() {
 }
 
 async function loadDashStats() {
+  // Show dashes while loading instead of 0
+  const elTotal = document.getElementById("st-total");
+  const elBest  = document.getElementById("st-best");
+  const elAvg   = document.getElementById("st-avg");
+  if(elTotal) elTotal.textContent = "—";
+  if(elBest)  elBest.textContent  = "—";
+  if(elAvg)   elAvg.textContent   = "—";
+
   const sessions = await getSessions();
   const total = sessions.length;
   const best  = total ? Math.max(...sessions.map(s=>s.score)) : null;
   const avg   = total ? Math.round(sessions.reduce((a,s)=>a+s.score,0)/total) : null;
 
-  const elTotal = document.getElementById("st-total");
-  const elBest  = document.getElementById("st-best");
-  const elAvg   = document.getElementById("st-avg");
   if(elTotal) elTotal.textContent = total || 0;
   if(elBest)  elBest.textContent  = best  !== null ? best  : "—";
   if(elAvg)   elAvg.textContent   = avg   !== null ? avg   : "—";
@@ -1071,12 +1093,20 @@ async function saveProfile() {
   if (stName)  stName.textContent  = name;
   if (stEmail) stEmail.textContent = email;
   if (SUPABASE_CONFIGURED && sb) {
-    const { data } = await sb.auth.getSession();
-    if (data.session) { currentUser = data.session.user; upsertSavedAccount(currentUser, data.session); }
-  } else {
-    if (currentUser) upsertSavedAccount(currentUser, null);
+      const { data } = await sb.auth.getSession();
+      if (data.session) {
+        currentUser = data.session.user;
+        upsertSavedAccount(currentUser, data.session);
+        await sb.from("profiles").upsert({
+          id: currentUser.id,
+          full_name: name,
+          updated_at: new Date().toISOString()
+        });
+      }
+    } else {
+      if (currentUser) upsertSavedAccount(currentUser, null);
+    }
   }
-}
 
 async function changePassword() {
   const newPass = document.getElementById("st-new-pass").value;
