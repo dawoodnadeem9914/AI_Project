@@ -372,22 +372,28 @@ async function handleLogin() {
 
   if (error) { showAuthAlert("login-alert",error.message); return; }
     currentUser = data.user;
-    const _acc = getSavedAccounts().find(a => a.id === data.user.id);
-    const _savedAvatar = _acc?.avatar || null;
     if (SUPABASE_CONFIGURED && sb) {
       const { data: sessData } = await sb.auth.getSession();
       upsertSavedAccount(data.user, sessData?.session);
+      const { data: profile } = await sb.from("profiles")
+        .select("avatar_url").eq("id", data.user.id).single();
+      if (profile?.avatar_url) {
+        localStorage.setItem("iai-avatar", profile.avatar_url);
+        const accs = getSavedAccounts();
+        const idx = accs.findIndex(a => a.id === data.user.id);
+        if (idx >= 0) { accs[idx].avatar = profile.avatar_url; saveAccountsStore(accs); }
+      } else {
+        localStorage.removeItem("iai-avatar");
+      }
     } else {
       upsertSavedAccount(data.user, null);
-    }
-    if (_savedAvatar) {
-      localStorage.setItem("iai-avatar", _savedAvatar);
-    } else {
-      localStorage.removeItem("iai-avatar");
+      const _acc = getSavedAccounts().find(a => a.id === data.user.id);
+      if (_acc?.avatar) localStorage.setItem("iai-avatar", _acc.avatar);
+      else localStorage.removeItem("iai-avatar");
     }
     initDashboard();
     loadStoredAvatar();
-}
+  }
 
 // ─── REGISTER ────────────────────────────────────────
 async function handleRegister() {
@@ -2095,11 +2101,21 @@ function handleAvatarUpload(input) {
   if (file.size > 2 * 1024 * 1024) { alert("Image must be smaller than 2MB"); return; }
 
   const reader = new FileReader();
-  reader.onload = (e) => {
+  reader.onload = async (e) => {
     const dataUrl = e.target.result;
     try { localStorage.setItem("iai-avatar", dataUrl); } catch(err) {}
     applyAvatar(dataUrl);
     input.value = "";
+    if (SUPABASE_CONFIGURED && sb && currentUser) {
+      await sb.from("profiles").upsert({
+        id: currentUser.id,
+        avatar_url: dataUrl,
+        updated_at: new Date().toISOString()
+      });
+      const accs = getSavedAccounts();
+      const idx = accs.findIndex(a => a.id === currentUser.id);
+      if (idx >= 0) { accs[idx].avatar = dataUrl; saveAccountsStore(accs); }
+    }
   };
   reader.readAsDataURL(file);
 }
@@ -2570,6 +2586,11 @@ function initDashParticles() {
 }
 // ─── REMOVE AVATAR ──────────────────────────────────
 function removeAvatar() {
+  if (SUPABASE_CONFIGURED && sb && currentUser) {
+    sb.from("profiles").upsert({
+      id: currentUser.id, avatar_url: null, updated_at: new Date().toISOString()
+    });
+  }
   try { localStorage.removeItem("iai-avatar"); } catch(e) {}
 
   const navAv = document.getElementById("nav-av");
