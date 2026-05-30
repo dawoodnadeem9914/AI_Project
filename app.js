@@ -1212,8 +1212,11 @@ function selSilence(btn) {
 }
 
 function clearHistory() {
-  showConfirm("Clear session history?","This will remove all your saved practice sessions. This cannot be undone.", () => {
+  showConfirm("Clear session history?","This will remove all your saved practice sessions. This cannot be undone.", async () => {
     try { localStorage.removeItem(getSessionsKey()); } catch(e) {}
+    if (SUPABASE_CONFIGURED && sb && currentUser) {
+      await sb.from("sessions").delete().eq("user_id", currentUser.id);
+    }
     document.getElementById("acc-sessions").textContent = "0";
     loadDashStats();
     loadRecentSessions();
