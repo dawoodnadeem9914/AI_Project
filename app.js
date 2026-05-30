@@ -595,7 +595,7 @@ function _drawHDChart(canvasId, pts, lineColor, glowHex, isAvg) {
   const canvas = document.getElementById(canvasId);
   if (!canvas) return;
   const ctx = canvas.getContext("2d");
-  const dpr = Math.min(window.devicePixelRatio || 1, 3);
+  const dpr = window.devicePixelRatio || 1;
   const container = canvas.parentElement;
   const W = Math.max(260, (container?.getBoundingClientRect().width || 500) - 48);
   const H = 220;
@@ -604,8 +604,9 @@ function _drawHDChart(canvasId, pts, lineColor, glowHex, isAvg) {
   canvas.height = H * dpr;
   canvas.style.width  = W + "px";
   canvas.style.height = H + "px";
-  ctx.scale(dpr, dpr);
-  ctx.clearRect(0, 0, W, H);
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.scale(dpr, dpr);
+    ctx.clearRect(0, 0, W, H);
 
   const isDark = document.documentElement.getAttribute("data-theme") !== "light";
 
