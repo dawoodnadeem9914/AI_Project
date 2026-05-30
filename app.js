@@ -173,26 +173,30 @@ document.addEventListener("DOMContentLoaded", async () => {
         const rf = document.getElementById("form-reset");
         if (rf) { rf.classList.remove("ap-hidden","hidden"); rf.style.display = ""; rf.classList.add("slide-in"); }
       } else if (event === "SIGNED_IN" && session && !currentUser) {
-        currentUser = session.user;
-        upsertSavedAccount(session.user, session);
-        initDashboard();
-        loadStoredAvatar();
-      }
+              currentUser = session.user;
+              upsertSavedAccount(session.user, session);
+              await loadSettings();
+              applySettings();
+              initDashboard();
+              loadStoredAvatar();
+            }
     });
   }
 
   if (await handleAuthCallback()) return;
 
   if (SUPABASE_CONFIGURED && sb) {
-    const { data } = await sb.auth.getSession();
-    if (data.session) {
-      currentUser = data.session.user;
-      upsertSavedAccount(data.session.user, data.session);
-      initDashboard();
-      loadStoredAvatar();
-      return;
+      const { data } = await sb.auth.getSession();
+      if (data.session) {
+        currentUser = data.session.user;
+        upsertSavedAccount(data.session.user, data.session);
+        await loadSettings();
+        applySettings();
+        initDashboard();
+        loadStoredAvatar();
+        return;
+      }
     }
-  }
   showPage("page-auth");
 });
 
@@ -1406,12 +1410,21 @@ async function handleAnswer(answer) {
 }
 // ─── PROMPTS ─────────────────────────────────────────
 function buildWarmupPrompt() {
+  const openers = [
+    "Start with a warm hello and ask how they are doing today.",
+    "Greet them enthusiastically and ask if they are ready to begin.",
+    "Welcome them and ask what made them interested in this role.",
+    "Say hello and ask them to tell you a little about themselves.",
+    "Greet them and ask how their day has been so far."
+  ];
+  const opener = openers[Math.floor(Math.random() * openers.length)];
   return `You are a professional, warm HR interviewer at a top ${IND_LABELS[selIndustry]} company. You are conducting a real ${LVL_LABELS[selLevel]} job interview.
-WARMUP RULES: Start with "Hello! Great to meet you. How are you today?" then naturally ask them to introduce themselves. Listen to their answer and ask ONE specific follow-up about exactly what they mentioned. Max 2-3 sentences per turn. Never evaluate or score.`;
+WARMUP RULES: ${opener} Then naturally ask them to introduce themselves if not already done. Listen to their answer and ask ONE specific follow-up about exactly what they mentioned. Max 2-3 sentences per turn. Never evaluate or score. Vary your language and tone each session — never repeat the same opening phrase.`;
 }
 
 function buildTransitionPrompt() {
-  return `You are a professional HR interviewer at a ${IND_LABELS[selIndustry]} company. You are moving from warmup to the technical interview. Be smooth, professional, and natural.`;
+  return `You are a professional HR interviewer at a ${IND_LABELS[selIndustry]} company. You are moving from warmup to the technical interview.
+CRITICAL: You just heard the candidate's warmup answer. Reference something SPECIFIC they just said before transitioning. Never use a generic transition. Be smooth, professional, and natural. Keep it to 2 sentences max.`;
 }
 
 function buildTechnicalPrompt() {
@@ -1425,13 +1438,15 @@ function buildTechnicalPrompt() {
   const previousQuestions = allAnswers.map(a => a.question).join(" | ");
   const pool = topics[selIndustry] || topics.tech;
   // Shuffle with session seed + current question number for unique selection
-  const shuffled = pool.slice().sort(() => Math.sin(sessionSeed + currentQ * 137.5 + Math.random()) - 0.5);
+  const shuffled = pool.slice().sort(() => Math.random() - 0.5);
   const picked = shuffled.slice(0, 5).join(", ");
   return `You are a professional HR interviewer at a top ${IND_LABELS[selIndustry]} company. Technical interview phase for ${LVL_LABELS[selLevel]} candidate.
-RULES: Ask exactly ONE question. Max 3 sentences. First, give a brief 1-sentence reaction to their previous answer showing you understood it (e.g. "That's a solid approach to TCP reliability — using the three-way handshake example was clear."). Then ask the next question.
-CRITICAL — DO NOT repeat or rephrase any of these already-asked questions: [${previousQuestions}]
-Your question MUST be about a DIFFERENT topic. Pick from: ${picked}.
-Question number ${currentQ + 1} of ${totalQ}. Be creative and specific.`;
+  RULES: Ask exactly ONE question. Max 3 sentences total.
+  STEP 1 — React: Give a genuine 1-sentence reaction that references something SPECIFIC and UNIQUE the candidate just said. Do NOT use generic phrases like "Great answer" or "That's interesting". Instead say something like "Using Redis for caching in that scenario was a smart call" or "Handling the patient's family that way shows real emotional intelligence."
+  STEP 2 — Ask: Ask the next technical question about a completely different topic.
+  CRITICAL — NEVER repeat or rephrase: [${previousQuestions}]
+  Pick from these unused topics: ${picked}.
+  Question ${currentQ + 1} of ${totalQ}. Be specific and creative — no generic questions.`;
 }
 
 // ─── OPENAI API ──────────────────────────────────────
@@ -1953,17 +1968,22 @@ async function getReport() {
     `Q${i+1}: ${a.question}\nAnswer: ${a.answer}\nWords: ${a.words}, Fillers: ${a.fillers}`
   ).join("\n\n");
 
-  const scoring = `CRITICAL SCORING — score based on CONTENT QUALITY. This is speech-to-text so ignore punctuation/grammar.
-    SKIPPED or "(No answer — skipped)" or under 5 words: overallScore 0-5.
-    POOR (under 30 words, vague, off-topic, no substance): 10-30.
-    BASIC (30-80 words, somewhat relevant but generic, no examples): 35-50.
-    DECENT (80-150 words, relevant with some specifics): 50-65.
-    GOOD (150-250 words, clear understanding, gives examples): 65-78.
-    STRONG (250-400 words, detailed examples, well-structured, STAR method): 78-88.
-    EXCELLENT (400+ words, exceptional depth, multiple specific examples, industry knowledge): 88-96.
-    IMPORTANT: These ranges are guidelines — quality matters MORE than length. A 200-word answer with perfect STAR examples can score 82. A 500-word rambling answer with no real substance scores 40-55.
-    Each filler word (um, uh, basically, literally) reduces fluencyScore by 4.
-    You MUST score based on actual content. Do NOT copy the example scores below — they are FORMAT examples only.`;
+  const scoring = `CRITICAL SCORING — score based on CONTENT QUALITY. This is speech-to-text so ignore ALL punctuation, grammar, and filler words in scoring.
+      SKIPPED or "(No answer — skipped)" or under 5 words: overallScore 0-10.
+      POOR (vague, off-topic, no real substance): 20-35.
+      BASIC (somewhat relevant but generic, no examples): 38-52.
+      DECENT (relevant answer with some specifics, shows understanding): 53-65.
+      GOOD (clear understanding, gives real examples, structured): 66-78.
+      STRONG (detailed examples, well-structured, shows depth): 79-88.
+      EXCELLENT (exceptional depth, multiple specific examples, impressive industry knowledge): 89-96.
+      IMPORTANT CALIBRATION RULES:
+      - This is a VOICE interview — spoken answers are naturally shorter than written ones. Be generous.
+      - A 60-80 word spoken answer with a real example = GOOD (66-75).
+      - A 30-60 word answer that directly addresses the question = DECENT (53-65).
+      - Penalize only for truly irrelevant or empty answers.
+      - Each filler word (um, uh, basically, literally) reduces fluencyScore by 2 ONLY, not the overall score.
+      - Never score below 35 if the candidate made a genuine attempt to answer.
+      - NEVER give the same score to every question — vary based on actual answer quality.`;
 
   const prompt = `Evaluate this ${LVL_LABELS[selLevel]} ${IND_LABELS[selIndustry]} interview.
 ${scoring}
