@@ -467,6 +467,7 @@ async function sendResetEmail() {
 async function handleLogout() {
   if (SUPABASE_CONFIGURED && sb) await sb.auth.signOut();
   currentUser = null;
+  localStorage.removeItem("iai-avatar");
   showPage("page-auth");
 }
 
@@ -917,11 +918,27 @@ function showMoreSessions() {
 function getSessionsKey() {
   return currentUser ? "iai-sessions-" + currentUser.id : "iai-sessions-guest";
 }
-function getSessions() {
+async function getSessions() {
+  if (SUPABASE_CONFIGURED && sb && currentUser) {
+    const { data } = await sb.from("sessions").select("*")
+      .eq("user_id", currentUser.id).order("date", { ascending: true });
+    return data || [];
+  }
   try { return JSON.parse(localStorage.getItem(getSessionsKey())||"[]"); } catch { return []; }
 }
 
-function saveSession(score) {
+async function saveSession(score) {
+  if (SUPABASE_CONFIGURED && sb && currentUser) {
+    await sb.from("sessions").insert({
+      user_id: currentUser.id,
+      industry: selIndustry,
+      level: selLevel,
+      questions: allAnswers.length,
+      score: score,
+      date: Date.now()
+    });
+    return;
+  }
   const key = sessionOwnerKey || getSessionsKey();
   let sessions = [];
   try { sessions = JSON.parse(localStorage.getItem(key) || "[]"); } catch { sessions = []; }
