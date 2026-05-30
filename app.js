@@ -1709,9 +1709,7 @@ function manualSubmit() {
   clearTimeout(silenceTimer);
   stopListening();
   const ans = liveTranscript.trim();
-  if (ans) {
-    handleAnswer(ans);
-  }
+  handleAnswer(ans || '(No answer — skipped)');
 }
 
 // ─── SKIP ─────────────────────────────────────────────
