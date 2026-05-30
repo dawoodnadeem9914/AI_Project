@@ -371,13 +371,11 @@ async function handleLogin() {
   document.getElementById("login-alert").classList.add("hidden");
   if (!email||!pass) { showAuthAlert("login-alert","Please fill in all fields."); return; }
 
-  manualLoginInProgress = true;
-    setBtnLoading("login-btn","login-spin",true,"Sign In");
-    await sleep(50);
+  setBtnLoading("login-btn","login-spin",true,"Sign In");
 
-    let data, error;
-    if (SUPABASE_CONFIGURED && sb) {
-      const res = await sb.auth.signInWithPassword({ email, password:pass });
+  let data, error;
+  if (SUPABASE_CONFIGURED && sb) {
+    const res = await sb.auth.signInWithPassword({ email, password:pass });
     data = res.data; error = res.error;
   } else {
     const res = demoLogin(email, pass);
@@ -387,33 +385,33 @@ async function handleLogin() {
 
   setBtnLoading("login-btn","login-spin",false,"Sign In");
 
-  if (error) { manualLoginInProgress = false; showAuthAlert("login-alert",error.message); return; }
-    currentUser = data.user;
-    if (SUPABASE_CONFIGURED && sb) {
-      const { data: sessData } = await sb.auth.getSession();
-      upsertSavedAccount(data.user, sessData?.session);
-      const { data: profile } = await sb.from("profiles")
-        .select("avatar_url").eq("id", data.user.id).single();
-      if (profile?.avatar_url) {
-        localStorage.setItem("iai-avatar", profile.avatar_url);
-        const accs = getSavedAccounts();
-        const idx = accs.findIndex(a => a.id === data.user.id);
-        if (idx >= 0) { accs[idx].avatar = profile.avatar_url; saveAccountsStore(accs); }
-      } else {
-        localStorage.removeItem("iai-avatar");
-      }
+  if (error) { showAuthAlert("login-alert",error.message); return; }
+
+  currentUser = data.user;
+  if (SUPABASE_CONFIGURED && sb) {
+    const { data: sessData } = await sb.auth.getSession();
+    upsertSavedAccount(data.user, sessData?.session);
+    const { data: profile } = await sb.from("profiles")
+      .select("avatar_url").eq("id", data.user.id).single();
+    if (profile?.avatar_url) {
+      localStorage.setItem("iai-avatar", profile.avatar_url);
+      const accs = getSavedAccounts();
+      const idx = accs.findIndex(a => a.id === data.user.id);
+      if (idx >= 0) { accs[idx].avatar = profile.avatar_url; saveAccountsStore(accs); }
     } else {
-      upsertSavedAccount(data.user, null);
-      const _acc = getSavedAccounts().find(a => a.id === data.user.id);
-      if (_acc?.avatar) localStorage.setItem("iai-avatar", _acc.avatar);
-      else localStorage.removeItem("iai-avatar");
+      localStorage.removeItem("iai-avatar");
     }
-    await loadSettings();
-        applySettings();
-        initDashboard();
-        loadStoredAvatar();
-        manualLoginInProgress = false;
-    }
+  } else {
+    upsertSavedAccount(data.user, null);
+    const _acc = getSavedAccounts().find(a => a.id === data.user.id);
+    if (_acc?.avatar) localStorage.setItem("iai-avatar", _acc.avatar);
+    else localStorage.removeItem("iai-avatar");
+  }
+  await loadSettings();
+  applySettings();
+  initDashboard();
+  loadStoredAvatar();
+}
 
 // ─── REGISTER ────────────────────────────────────────
 async function handleRegister() {
@@ -449,7 +447,12 @@ async function handleRegister() {
 
   if (error) { showAuthAlert("reg-alert",error.message); return; }
   currentUser = data.user;
-  if (data.session) { initDashboard(); }
+  if (data.session) {
+      await loadSettings();
+      applySettings();
+      initDashboard();
+      loadStoredAvatar();
+    }
   else { showAuthAlert("reg-alert","✓ Account created! Check your email to confirm then sign in.", true); }
 }
 
