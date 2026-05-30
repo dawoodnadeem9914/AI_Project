@@ -487,8 +487,9 @@ function initDashboard() {
   const first = name.split(" ")[0];
 
   if (!localStorage.getItem("iai-avatar")) clearAvatarDOM();
-  document.getElementById("nav-av").textContent   = first[0].toUpperCase();
-  document.getElementById("nav-name").textContent = first;
+    const _navAv = document.getElementById("nav-av");
+    if (!localStorage.getItem("iai-avatar")) _navAv.textContent = first[0].toUpperCase();
+    document.getElementById("nav-name").textContent = first;
 
   const hour = new Date().getHours();
   const gr   = hour<12?"Good morning":hour<17?"Good afternoon":"Good evening";
