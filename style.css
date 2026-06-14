@@ -1112,14 +1112,18 @@ body{background:var(--bg);color:var(--txt);font-size:15px;line-height:1.6;transi
 [data-theme="light"] .ac-head h2 { color:#fdf0ea; }
 [data-theme="light"] .ac-head p { color:rgba(253,240,234,.6); }
 [data-theme="light"] .ac-field label { color:rgba(253,240,234,.6); }
-[data-theme="light"] .ac-field input { background:rgba(255,255,255,.06); border-color:rgba(255,255,255,.1); color:#fdf0ea; }
-[data-theme="light"] .ac-field input::placeholder { color:rgba(253,240,234,.35); }
+[data-theme="light"] .ac-field input { background:rgba(255,255,255,.06) !important; border-color:rgba(255,255,255,.1) !important; color:#fdf0ea !important; -webkit-text-fill-color:#fdf0ea !important; }
+[data-theme="light"] .ac-field input::placeholder { color:rgba(253,240,234,.3) !important; -webkit-text-fill-color:rgba(253,240,234,.3) !important; }
 [data-theme="light"] .ac-forgot button { color:var(--cr2); }
 [data-theme="light"] .ac-back { color:rgba(253,240,234,.6); }
 [data-theme="light"] .ac-tab { color:rgba(253,240,234,.5); }
 [data-theme="light"] .ac-tab.active { color:var(--cr2); }
 [data-theme="light"] .pw-reqs { background:rgba(255,255,255,.04); border-color:rgba(255,255,255,.07); }
 [data-theme="light"] .af-alert { color:var(--red); }
+[data-theme="light"] .pw-reqs { background:rgba(255,255,255,.04) !important; border-color:rgba(255,255,255,.07) !important; }
+[data-theme="light"] .pw-req { color:rgba(253,240,234,.4); }
+[data-theme="light"] .pw-req.ok { color:rgba(253,240,234,.8); }
+[data-theme="light"] .ac-field input:focus { background:rgba(255,255,255,.10) !important; border-color:var(--cr2) !important; box-shadow:0 0 0 3px rgba(192,36,63,.2) !important; }
 
 .ac-tabs { display:flex; border-bottom:1px solid rgba(192,36,63,.15); }
 .ac-tab { flex:1; padding:15px 10px; background:none; border:none; border-bottom:2px solid transparent; margin-bottom:-1px; color:var(--txt2); font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; transition:color .15s; }
@@ -1858,4 +1862,41 @@ body{background:var(--bg);color:var(--txt);font-size:15px;line-height:1.6;transi
   background:rgba(255,255,255,.06) !important;
   color:#fdf0ea !important;
   -webkit-text-fill-color:#fdf0ea !important;
+}
+
+
+/* ═══ AUTH DARK FINAL FIXES ═══ */
+
+/* 1. pw-reqs box — use #page-auth scope to beat conflicting rules */
+[data-theme="light"] #page-auth .pw-reqs {
+  background: rgba(255,255,255,.04) !important;
+  border-color: rgba(255,255,255,.07) !important;
+}
+[data-theme="light"] #page-auth .pw-req { color: rgba(253,240,234,.35) !important; }
+[data-theme="light"] #page-auth .pw-req.ok { color: rgba(253,240,234,.75) !important; }
+[data-theme="light"] #page-auth .pw-circle { border-color: rgba(253,240,234,.3) !important; }
+
+/* 2. White box on focus/autofill — browser autofill overrides background unless
+      you use the inset box-shadow trick. This is the real cause of the white email box. */
+#page-auth .ac-field input:-webkit-autofill,
+#page-auth .ac-field input:-webkit-autofill:hover,
+#page-auth .ac-field input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px #120810 inset !important;
+  -webkit-text-fill-color: #fdf0ea !important;
+  caret-color: #c0243f !important;
+  transition: background-color 5000s ease-in-out 0s !important;
+}
+
+/* 3. iOS cursor — the cardGlow animation constantly repaints box-shadow,
+      causing the layer to shift and the cursor to jump. Disable on touch. */
+@media (hover: none) and (pointer: coarse) {
+  .auth-card {
+    animation: none !important;
+    -webkit-mask-image: none !important;
+  }
+  #page-auth .ac-field input {
+    transform: none !important;
+    position: relative;
+    z-index: 10;
+  }
 }
