@@ -1900,3 +1900,15 @@ body{background:var(--bg);color:var(--txt);font-size:15px;line-height:1.6;transi
     z-index: 10;
   }
 }
+
+/* Fix tab hover + active line when light mode but on dark auth card */
+[data-theme="light"] .ac-tab:hover {
+  color: rgba(253,240,234,.85) !important;
+}
+[data-theme="light"] .ac-tab.active {
+  color: #c0243f !important;
+  border-bottom-color: #c0243f !important;
+}
+[data-theme="light"] .ac-tab {
+  color: rgba(253,240,234,.45) !important;
+}
