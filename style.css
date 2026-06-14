@@ -340,6 +340,13 @@ body{background:var(--bg);color:var(--txt);font-size:15px;line-height:1.6;transi
 .dash-grid > .dc:nth-child(3) { animation:dashFadeUp .6s ease-out .35s both; }
 @keyframes dashFadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
 
+
+/* New */
+.ac-form input, .ac-form button {
+  user-select:text;
+  -webkit-user-select:text;
+}
+
 /* Hero band */
 .dash-hero-band{
   display:flex;align-items:flex-start;justify-content:space-between;
@@ -1103,13 +1110,13 @@ body{background:var(--bg);color:var(--txt);font-size:15px;line-height:1.6;transi
 .ac-tab:hover { color:var(--txt); }
 .ac-tab.active { color:var(--cr2); border-bottom-color:var(--cr2); }
 
-.ac-form { padding:26px 28px 28px; }
+.ac-form { padding:26px 28px 28px; overflow:hidden; user-select:none; -webkit-user-select:none; }
 .ac-form.ap-hidden { display:none !important; }
 .ac-head { margin-bottom:22px; }
 .ac-head h2 { font-family:'DM Serif Display',Georgia,serif; font-size:22px; font-weight:400; letter-spacing:-.3px; margin-bottom:5px; }
 .ac-head p { font-size:13px; color:var(--txt2); }
 
-.ac-field { margin-bottom:16px; }
+.ac-field { margin-bottom:16px; overflow:hidden; }
 .ac-field label { display:block; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.9px; color:var(--txt2); margin-bottom:7px; }
 .ac-field input { width:100%; background:rgba(255,255,255,.06); border:1.5px solid rgba(255,255,255,.1); color:var(--txt); padding:12px 14px; border-radius:9px; font-size:14px; font-family:inherit; outline:none; transition:.2s; }
 [data-theme="light"] .ac-field input { background:var(--bg3); border-color:var(--bdr2); }
