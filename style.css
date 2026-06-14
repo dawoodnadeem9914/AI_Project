@@ -1016,7 +1016,12 @@ body{background:var(--bg);color:var(--txt);font-size:15px;line-height:1.6;transi
 /* ══════════════════════════════════════════════
    AUTH PAGE
 ══════════════════════════════════════════════ */
-#page-auth { display:none; min-height:100vh; background:var(--bg); flex-direction:column; position:relative; }
+#page-auth { display:none; min-height:100vh; background:#07030e; flex-direction:column; position:relative; }
+[data-theme="light"] #page-auth { background:#07030e; }
+[data-theme="light"] #page-auth .abs-headline { color:#fdf0ea; }
+[data-theme="light"] #page-auth .abs-desc { color:rgba(253,240,234,.38); }
+[data-theme="light"] #page-auth .auth-bottombar { color:rgba(253,240,234,.16); }
+[data-theme="light"] #page-auth .atb-name { color:#fdf0ea; }
 #page-auth.active { display:flex; }
 
 .auth-atmosphere { position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden; background: radial-gradient(ellipse at 20% 50%, rgba(139,18,40,.22) 0%, transparent 55%), radial-gradient(ellipse at 80% 20%, rgba(92,10,25,.15) 0%, transparent 50%), radial-gradient(ellipse at 60% 80%, rgba(60,5,15,.18) 0%, transparent 50%), radial-gradient(ellipse at 50% 50%, rgba(30,2,8,.6) 0%, transparent 70%); }
