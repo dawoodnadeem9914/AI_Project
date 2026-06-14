@@ -1111,6 +1111,7 @@ body{background:var(--bg);color:var(--txt);font-size:15px;line-height:1.6;transi
 .ac-tab.active { color:var(--cr2); border-bottom-color:var(--cr2); }
 
 .ac-form { padding:26px 28px 28px; overflow:hidden; user-select:none; -webkit-user-select:none; }
+.ac-form input { user-select:text !important; -webkit-user-select:text !important; cursor:text !important; pointer-events:auto !important; position:relative; z-index:10; }
 .ac-form.ap-hidden { display:none !important; }
 .ac-head { margin-bottom:22px; }
 .ac-head h2 { font-family:'DM Serif Display',Georgia,serif; font-size:22px; font-weight:400; letter-spacing:-.3px; margin-bottom:5px; }
@@ -1118,7 +1119,7 @@ body{background:var(--bg);color:var(--txt);font-size:15px;line-height:1.6;transi
 
 .ac-field { margin-bottom:16px; overflow:hidden; }
 .ac-field label { display:block; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.9px; color:var(--txt2); margin-bottom:7px; }
-.ac-field input { width:100%; background:rgba(255,255,255,.06); border:1.5px solid rgba(255,255,255,.1); color:var(--txt); padding:12px 14px; border-radius:9px; font-size:14px; font-family:inherit; outline:none; transition:.2s; }
+.ac-field input { width:100%; background:rgba(255,255,255,.06); border:1.5px solid rgba(255,255,255,.1); color:var(--txt); padding:12px 14px; border-radius:9px; font-size:14px; font-family:inherit; outline:none; transition:.2s; user-select:text !important; -webkit-user-select:text !important; cursor:text !important; }
 [data-theme="light"] .ac-field input { background:var(--bg3); border-color:var(--bdr2); }
 .ac-field input::placeholder { color:var(--txt3); }
 .ac-field input:focus { border-color: var(--cr2); box-shadow: 0 0 0 3px rgba(192,36,63,0.13); outline: none; }
