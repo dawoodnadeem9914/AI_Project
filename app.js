@@ -1651,16 +1651,11 @@ function stopListening() {
   clearTimeout(silenceTimer);
 
   if (speechRecognition) {
-      try { speechRecognition.abort(); } catch(e) {}
-      speechRecognition = null;
-    }
-    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-      try { mediaRecorder.stop(); } catch(e) {}
-    }
-    if (recordingStream) {
-      recordingStream.getTracks().forEach(t => t.stop());
-      recordingStream = null;
-    }
+    try { speechRecognition.abort(); } catch(e) {}
+    speechRecognition = null;
+  }
+  // mediaRecorder is NOT stopped here — manualSubmit handles it
+  // so transcribeWithWhisper completes before handleAnswer is called
 
   document.getElementById('iv-mic-btn').classList.remove('on');
   document.getElementById('mic-r1').classList.remove('pulse');
@@ -1776,6 +1771,26 @@ function autoSubmitAnswer() {
 function manualSubmit() {
   if (interviewDone) return;
   clearTimeout(silenceTimer);
+
+  // iOS Whisper path — mediaRecorder is active, must wait for transcription
+  if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+    isListening = false;
+    document.getElementById('iv-mic-btn').classList.remove('on');
+    document.getElementById('mic-r1').classList.remove('pulse');
+    document.getElementById('mic-r2').classList.remove('pulse');
+    document.getElementById('itz-dot').classList.remove('live');
+    document.getElementById('itz-hint').textContent = 'Transcribing...';
+    setMicState(false);
+    setSkipState(false);
+    try { mediaRecorder.stop(); } catch(e) {}
+    if (recordingStream) {
+      recordingStream.getTracks().forEach(t => t.stop());
+      recordingStream = null;
+    }
+    return;
+  }
+
+  // Web Speech path (Chrome/Edge/Android)
   stopListening();
   const ans = liveTranscript.trim();
   handleAnswer(ans || '(No answer — skipped)');
@@ -1828,6 +1843,7 @@ function stopWhisperRecording() {
 }
 
 async function transcribeWithWhisper() {
+  if (interviewDone) return;
   if (audioChunks.length === 0) { handleAnswer('(No answer — skipped)'); return; }
 
   document.getElementById('itz-hint').textContent = 'Transcribing...';

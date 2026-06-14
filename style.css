@@ -1094,7 +1094,7 @@ body{background:var(--bg);color:var(--txt);font-size:15px;line-height:1.6;transi
 
 /* RIGHT */
 .auth-card-side { display:flex; justify-content:center; }
-.auth-card { width:100%; max-width:420px; background:rgba(18,8,12,.92); backdrop-filter:blur(24px); border:1px solid rgba(192,36,63,.25); border-radius:20px; overflow:hidden; box-shadow:0 32px 80px rgba(0,0,0,.6),0 0 80px rgba(139,18,40,.12),0 0 0 1px rgba(255,255,255,.04) inset; animation:cardGlow 4s ease-in-out infinite; }
+.auth-card { width:100%; max-width:420px; background:rgba(18,8,12,.92); backdrop-filter:blur(24px); border:1px solid rgba(192,36,63,.25); border-radius:20px; overflow:hidden; box-shadow:0 32px 80px rgba(0,0,0,.6),0 0 80px rgba(139,18,40,.12),0 0 0 1px rgba(255,255,255,.04) inset; animation:cardGlow 4s ease-in-out infinite; isolation:isolate; }
 @keyframes cardGlow { 0%,100%{box-shadow:0 32px 80px rgba(0,0,0,.6),0 0 60px rgba(139,18,40,.08),0 0 0 1px rgba(255,255,255,.04) inset} 50%{box-shadow:0 32px 80px rgba(0,0,0,.6),0 0 100px rgba(192,36,63,.18),0 0 0 1px rgba(255,255,255,.06) inset,0 0 40px rgba(192,36,63,.1)} }
 [data-theme="light"] .auth-card { background:rgba(255,248,244,.97); border-color:rgba(192,36,63,.2); animation:none; }
 
@@ -1114,7 +1114,7 @@ body{background:var(--bg);color:var(--txt);font-size:15px;line-height:1.6;transi
 .ac-field input { width:100%; background:rgba(255,255,255,.06); border:1.5px solid rgba(255,255,255,.1); color:var(--txt); padding:12px 14px; border-radius:9px; font-size:14px; font-family:inherit; outline:none; transition:.2s; }
 [data-theme="light"] .ac-field input { background:var(--bg3); border-color:var(--bdr2); }
 .ac-field input::placeholder { color:var(--txt3); }
-.ac-field input:focus { border-color:var(--cr2); box-shadow:0 0 0 3px rgba(192,36,63,.13),0 0 20px rgba(192,36,63,.06); }
+.ac-field input:focus { border-color: var(--cr2); box-shadow: 0 0 0 3px rgba(192,36,63,0.13); }
 
 .ac-forgot { text-align:right; margin-top:6px; }
 .ac-forgot button { background:none; border:none; color:var(--cr2); font-size:12px; font-weight:600; cursor:pointer; font-family:inherit; text-decoration:underline; text-underline-offset:2px; }
