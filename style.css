@@ -1810,3 +1810,30 @@ body{background:var(--bg);color:var(--txt);font-size:15px;line-height:1.6;transi
   box-sizing: border-box; transition: .2s;
 }
 .ovs-add-field input:focus { border-color: var(--cr2); }
+/* iOS fixes */
+.af-eye {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 12px;
+  z-index: 999;
+  position: absolute;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  cursor: pointer;
+}
+
+.vo-preview-btn {
+  min-width: 44px;
+  min-height: 44px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  cursor: pointer;
+}
+
+.ac-form input, .ac-field input {
+  font-size: 16px !important;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: text !important;
+  user-select: text !important;
+}
