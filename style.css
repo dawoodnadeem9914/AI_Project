@@ -1108,7 +1108,18 @@ body{background:var(--bg);color:var(--txt);font-size:15px;line-height:1.6;transi
 .auth-card-side { display:flex; justify-content:center; }
 .auth-card { width:100%; max-width:420px; background:rgba(18,8,12,.92); backdrop-filter:blur(24px); border:1px solid rgba(192,36,63,.25); border-radius:20px; overflow:visible; box-shadow:0 32px 80px rgba(0,0,0,.6),0 0 80px rgba(139,18,40,.12),0 0 0 1px rgba(255,255,255,.04) inset; animation:cardGlow 4s ease-in-out infinite; isolation:isolate; transform:translateZ(0); -webkit-mask-image:-webkit-radial-gradient(white,black); }
 @keyframes cardGlow { 0%,100%{box-shadow:0 32px 80px rgba(0,0,0,.6),0 0 60px rgba(139,18,40,.08),0 0 0 1px rgba(255,255,255,.04) inset} 50%{box-shadow:0 32px 80px rgba(0,0,0,.6),0 0 100px rgba(192,36,63,.18),0 0 0 1px rgba(255,255,255,.06) inset,0 0 40px rgba(192,36,63,.1)} }
-[data-theme="light"] .auth-card { background:rgba(255,248,244,.97); border-color:rgba(192,36,63,.2); animation:none; }
+[data-theme="light"] .auth-card { background:rgba(18,8,12,.92); border-color:rgba(192,36,63,.25); animation:none; }
+[data-theme="light"] .ac-head h2 { color:#fdf0ea; }
+[data-theme="light"] .ac-head p { color:rgba(253,240,234,.6); }
+[data-theme="light"] .ac-field label { color:rgba(253,240,234,.6); }
+[data-theme="light"] .ac-field input { background:rgba(255,255,255,.06); border-color:rgba(255,255,255,.1); color:#fdf0ea; }
+[data-theme="light"] .ac-field input::placeholder { color:rgba(253,240,234,.35); }
+[data-theme="light"] .ac-forgot button { color:var(--cr2); }
+[data-theme="light"] .ac-back { color:rgba(253,240,234,.6); }
+[data-theme="light"] .ac-tab { color:rgba(253,240,234,.5); }
+[data-theme="light"] .ac-tab.active { color:var(--cr2); }
+[data-theme="light"] .pw-reqs { background:rgba(255,255,255,.04); border-color:rgba(255,255,255,.07); }
+[data-theme="light"] .af-alert { color:var(--red); }
 
 .ac-tabs { display:flex; border-bottom:1px solid rgba(192,36,63,.15); }
 .ac-tab { flex:1; padding:15px 10px; background:none; border:none; border-bottom:2px solid transparent; margin-bottom:-1px; color:var(--txt2); font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; transition:color .15s; }
@@ -1841,4 +1852,10 @@ body{background:var(--bg);color:var(--txt);font-size:15px;line-height:1.6;transi
   -webkit-tap-highlight-color: transparent;
   -webkit-user-select: text !important;
   user-select: text !important;
+}
+
+[data-theme="light"] #page-auth .ac-field input {
+  background:rgba(255,255,255,.06) !important;
+  color:#fdf0ea !important;
+  -webkit-text-fill-color:#fdf0ea !important;
 }
