@@ -1,22 +1,24 @@
 <div align="center">
 
-# 🤖 AI Mock Interview Coach
+<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=12,20,30&height=200&section=header&text=AI%20Coach%20Interview&fontSize=46&fontColor=fff&animation=twinkling&fontAlignY=38&desc=AI-Powered%20Mock%20Interview%20Practice%20Platform&descAlignY=58&descSize=18" width="100%"/>
 
+# 🤖 AI Coach Interview
 ### *Intelligent interview preparation — powered by AI, free for everyone*
 
-[![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
-[![AI Powered](https://img.shields.io/badge/AI_Powered-FF6F00?style=for-the-badge&logo=tensorflow&logoColor=white)](#)
-[![Free to Use](https://img.shields.io/badge/Free_to_Use-00C853?style=for-the-badge&logo=checkmarx&logoColor=white)](#)
+[![🌐 Try It Live](https://img.shields.io/badge/🌐_Try_It_Live-00C853?style=for-the-badge&logo=googlechrome&logoColor=white)](https://dawoodnadeem9914.github.io/AI_Project)
+[![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](https://github.com/dawoodnadeem9914/AI_Project)
+[![GPT-4o-mini](https://img.shields.io/badge/GPT--4o--mini-412991?style=for-the-badge&logo=openai&logoColor=white)](#)
+[![ElevenLabs](https://img.shields.io/badge/ElevenLabs-000000?style=for-the-badge&logo=elevenlabs&logoColor=white)](#)
+[![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)](#)
+[![Cloudflare Workers](https://img.shields.io/badge/Cloudflare_Workers-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)](#)
+[![GitHub Pages](https://img.shields.io/badge/GitHub_Pages-222222?style=for-the-badge&logo=github&logoColor=white)](https://dawoodnadeem9914.github.io/AI_Project)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](LICENSE)
-[![Status](https://img.shields.io/badge/Status-Active-brightgreen?style=for-the-badge)](#)
+[![Status](https://img.shields.io/badge/Status-Live-brightgreen?style=for-the-badge)](#)
 
-<br/>
+> **Practice smarter. Get hired faster.**  
+> Your AI interviewer listens to your voice, tracks your progress, and gives you a detailed performance report after every session.
 
-
-> 🌐 **[Click here to try it live!](https://dawoodnadeem9914.github.io/AI_Project)**
-
-> **Stop winging interviews. Start winning them.**  
-> AI Mock Interview Coach conducts realistic, personalised mock interviews, evaluates your answers in real-time, and gives you specific, actionable feedback — so you walk into your next real interview fully prepared.
+**[🌐 Launch the App](https://dawoodnadeem9914.github.io/AI_Project)** &nbsp;|&nbsp; Built for CCS3600 Artificial Intelligence &nbsp;|&nbsp; Universiti Putra Malaysia
 
 </div>
 
@@ -25,195 +27,277 @@
 ## 📋 Table of Contents
 
 - [Overview](#-overview)
+- [Live Demo](#-live-demo)
 - [Features](#-features)
+- [Tech Stack](#-tech-stack)
+- [System Architecture](#-system-architecture)
+- [File Structure](#-file-structure)
 - [How It Works](#-how-it-works)
-- [Technologies Used](#-technologies-used)
-- [Getting Started](#-getting-started)
-- [Usage](#-usage)
-- [Project Structure](#-project-structure)
-- [Future Improvements](#-future-improvements)
-- [Contributing](#-contributing)
-- [Author](#-author)
+- [Setup & Deployment](#-setup--deployment)
+- [Browser Compatibility](#-browser-compatibility)
+- [Project Team](#-project-team)
 
 ---
 
 ## 🌟 Overview
 
-Landing a job is hard enough — failing in an interview because you weren't prepared makes it harder. **AI Mock Interview Coach** solves that problem by simulating a real interview environment using AI.
+**AI Coach Interview** is a free web application that helps students and fresh graduates practice for job interviews. Instead of reading tips from a website or practising alone, users have a real conversation with an AI interviewer that:
 
-The platform:
-- **Asks you relevant interview questions** (technical, behavioural, or role-specific)
-- **Listens to and evaluates your answers** for completeness, clarity, and quality
-- **Scores your performance** with a transparent, weighted rubric
-- **Gives personalised, actionable suggestions** — not just "try harder", but *exactly* what to improve
+- 🎙️ **Listens to your voice** using the Web Speech API (desktop/Android) or OpenAI Whisper (iOS)
+- 🧠 **Asks intelligent follow-up questions** powered by GPT-4o-mini with full conversation memory
+- 🔊 **Speaks back in a natural human voice** via ElevenLabs neural text-to-speech
+- 📊 **Scores your performance** across Communication, Content Quality, Confidence, and Fluency
+- 💾 **Syncs your history** across all devices via Supabase cloud authentication
 
-It's completely **free to use**, making quality interview preparation accessible to everyone.
+The app runs **entirely in the browser** — no installation required, no backend server, completely free.
+
+> Built for **CCS3600 Artificial Intelligence** — Universiti Putra Malaysia (UPM), Sem 2 2025/2026.
+
+---
+
+## 🌐 Live Demo
+
+| | |
+|---|---|
+| **App URL** | [https://dawoodnadeem9914.github.io/AI_Project](https://dawoodnadeem9914.github.io/AI_Project) |
+| **Best Browser** | Google Chrome or Microsoft Edge |
+| **Mobile** | Android Chrome ✅ · iPhone Safari ✅ (Whisper fallback) |
+| **Cost** | 100% Free — no account required to try |
 
 ---
 
 ## ✨ Features
 
-| Feature | Description |
-|---|---|
-| 🎯 **Dynamic Question Generation** | AI generates contextually relevant interview questions tailored to each session |
-| 📊 **Real-Time Response Scoring** | Answers are evaluated and scored on a multi-dimensional rubric |
-| 💡 **Personalised Feedback** | Specific, actionable suggestions for improvement — not generic advice |
-| 🔁 **Iterative Practice** | Practice as many times as you need — every session is unique |
-| 🆓 **Free to Use** | Zero cost, zero barriers — accessible to all job seekers |
-| 🖥️ **CLI-Based Interface** | Lightweight, fast, and runs on any machine with Python |
+### 🎙️ Voice-First Interview Experience
+- **Live speech recognition** on Chrome, Edge, and Android via Web Speech API
+- **iOS support** via OpenAI Whisper — records audio and transcribes after submission
+- **Filler word detection** counts "um", "uh", "basically", "literally" in real-time while speaking
+- **ElevenLabs AI voice** — choose between Adam (male, default) or Bella (female) interviewer
+- **Auto-submit timer** — configurable silence detection: 2s, 3.5s (default), or 5s
+
+### 🧠 AI Interview Engine (GPT-4o-mini)
+- **Three-phase interview**: Warmup → Transition → Technical questions
+- **Full context memory** — AI remembers the entire conversation, never repeats questions
+- **5 Industries**: Technology · Banking & Finance · Healthcare · Education · Engineering
+- **3 Experience Levels**: Internship · Fresh Graduate · Senior Position
+- **Flexible sessions**: 1, 3, 5, or custom questions (up to 10 per session)
+
+### 📊 Performance Report
+- **Overall score** out of 100 with animated ring and grade (Excellent / Good / Fair / Needs Work)
+- **4 category scores**: Communication · Content Quality · Confidence · Fluency
+- **Fluency penalty**: each filler word deducts 4 points from Fluency score
+- **STAR method evaluation**: Situation, Task, Action, Result scoring rubric
+- **3 personalised improvement tips** tailored to your specific answers
+- **Full answer breakdown**: per-question score, word count, filler count, AI feedback
+
+### 📈 Progress Tracking (via Supabase)
+- **Score Timeline chart** — your last 10 sessions visualised over time
+- **Average Trend chart** — running average to track improvement
+- **Session history cards** — filter by industry, score range, or keyword
+- **Cross-device sync** — all data saved to Supabase, available anywhere you sign in
+
+### ⚙️ Customisation
+- Dark mode / Light mode with smooth transitions
+- Normal / Large font size
+- AI voice selection with live preview button
+- AI speaking speed: Slow / Normal / Fast
+- Profile photo, name, email, and password editable from settings
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer | Technology | Purpose |
+|---|---|---|
+| **Frontend** | HTML · CSS · JavaScript | All UI, interview logic, voice handling, charts |
+| **AI — Conversation** | OpenAI GPT-4o-mini | Question generation, conversation, scoring |
+| **AI — Voice Input (Desktop)** | Web Speech API | Live real-time speech-to-text |
+| **AI — Voice Input (iOS)** | OpenAI Whisper | Audio transcription fallback for Safari iPhone |
+| **AI — Voice Output** | ElevenLabs Neural TTS | Natural human interviewer voice |
+| **Security Layer** | Cloudflare Workers | API proxy — hides keys from public source code |
+| **Auth & Database** | Supabase | User accounts, session history, profile sync |
+| **Hosting** | GitHub Pages | Free public deployment |
+
+---
+
+## 🏗️ System Architecture
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│                      USER BROWSER                            │
+│  index.html (910 lines)  app.js (2620 lines)  style.css     │
+│  Web Speech API · Audio Playback · localStorage (demo cache) │
+└────────────────────────┬─────────────────────────────────────┘
+                         │
+                         ▼
+┌──────────────────────────────────────────────────────────────┐
+│          CLOUDFLARE WORKER — Secure API Proxy                │
+│     Encrypted Secrets: OPENAI_KEY | ELEVENLABS_KEY           │
+├─────────────────┬──────────────────┬────────────────────────┤
+│  Route 1        │  Route 2         │  Route 3               │
+│ /chat/completions│ /audio/transcriptions│ /text-to-speech/  │
+│                 │                  │                        │
+│ OpenAI API      │ OpenAI Whisper   │ ElevenLabs TTS         │
+│ GPT-4o-mini     │ iOS fallback     │ Adam / Bella voice     │
+└─────────────────┴──────────────────┴────────────────────────┘
+                         │  (public anon key — safe by design)
+                         ▼
+┌──────────────────────────────────────────────────────────────┐
+│              SUPABASE — Auth & Database                      │
+│   Registration · Login · Password Reset · Session History    │
+│   Profile · Avatar · Settings · Cross-device Sync           │
+└──────────────────────────────────────────────────────────────┘
+                         │
+              GitHub Pages — https://dawoodnadeem9914.github.io/AI_Project
+```
+
+---
+
+## 📁 File Structure
+
+```
+AI_Project/
+│
+├── index.html   # ~910 lines  — All pages: login, dashboard, interview, results, settings
+├── app.js       # ~2620 lines — All logic: AI calls, voice handling, charts, interview flow
+├── style.css    # ~1800 lines — All styling: dark/light themes, responsive, animations
+├── init.js      # ~5 lines   — API config for local dev (excluded from GitHub via .gitignore)
+├── .gitignore   # Keeps init.js and API keys out of the public repository
+└── README.md
+```
 
 ---
 
 ## 🔄 How It Works
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                     AI MOCK INTERVIEW FLOW                      │
-└─────────────────────────────────────────────────────────────────┘
-
-  [1] Session Start         [2] AI Questioning         [3] Candidate Responds
-  ┌──────────────┐          ┌──────────────┐           ┌──────────────┐
-  │ User selects │  ──────► │ AI generates │  ──────►  │ User types   │
-  │ interview    │          │ personalised │           │ or speaks    │
-  │ type & role  │          │ questions    │           │ their answer │
-  └──────────────┘          └──────────────┘           └──────────────┘
-                                                               │
-                                                               ▼
-  [6] Summary Report        [5] Suggestions            [4] AI Evaluation
-  ┌──────────────┐          ┌──────────────┐           ┌──────────────┐
-  │ Total score  │  ◄─────  │ Specific     │  ◄─────── │ Score +      │
-  │ per-question │          │ improvement  │           │ analysis of  │
-  │ breakdown    │          │ tips         │           │ the response │
-  └──────────────┘          └──────────────┘           └──────────────┘
+Step 1  User selects industry, experience level, and number of questions
+        ↓
+Step 2  App sends system prompt to GPT-4o-mini via Cloudflare Worker
+        AI begins warmup phase — friendly intro questions to ease the user in
+        ↓
+Step 3  AI response text sent to ElevenLabs → Natural voice audio plays through speaker
+        ↓
+Step 4  Microphone activates:
+        Desktop / Android  → Web Speech API transcribes live, words appear in real-time
+        iPhone Safari      → MediaRecorder records audio → sent to Whisper after mic tap
+        ↓
+Step 5  Transcribed answer + full conversation history sent to GPT-4o-mini
+        AI acknowledges the answer and asks the next question
+        ↓
+Step 6  Cycle repeats through Transition → Technical phases
+        ↓
+Step 7  All questions and answers sent to GPT-4o-mini with detailed scoring rubric
+        Returns JSON: overall score, 4 category scores, strengths, weaknesses,
+        3 improvement tips, per-answer feedback
+        ↓
+Step 8  Session metadata saved to Supabase
+        Results shown: animated score ring, category bars, answer breakdown
 ```
 
----
-
-## 🛠️ Technologies Used
-
-| Category | Technology |
-|---|---|
-| **Language** | Python 3.x |
-| **AI / NLP** | Natural Language Processing, AI Response Evaluation |
-| **Interface** | Command-Line Interface (CLI) |
-| **Core Logic** | Custom scoring engine, question generation pipeline |
+**Scoring rubric evaluates:** Answer length · Content quality · Use of examples · STAR method · Filler word count
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Setup & Deployment
 
 ### Prerequisites
 
-- Python 3.8 or higher
-- pip (Python package manager)
+| Tool | Purpose | Cost |
+|---|---|---|
+| GitHub Account | Host code + GitHub Pages deployment | Free |
+| Cloudflare Account | Secure API proxy Worker | Free (100K req/day) |
+| OpenAI API Key | GPT-4o-mini + Whisper | Pay per use |
+| ElevenLabs API Key | Neural TTS voice | Free tier available |
+| Supabase Project | Auth, user data, session history | Free tier |
 
-### Installation
+### 1 — Set Up Cloudflare Worker
+
+```
+1. Go to Cloudflare Dashboard → Workers & Pages → Create new Worker
+2. Paste the proxy code with 3 routes:
+   /v1/chat/completions       → OpenAI (GPT-4o-mini + scoring)
+   /v1/audio/transcriptions   → OpenAI Whisper (iOS voice input)
+   /v1/text-to-speech/{id}    → ElevenLabs (AI voice output)
+3. Settings → Variables → Add secrets:
+   OPENAI_KEY     = your_openai_api_key
+   ELEVENLABS_KEY = your_elevenlabs_api_key
+4. Deploy → Copy the Worker URL
+```
+
+### 2 — Set Up Supabase
+
+```
+1. Create a Supabase project → Enable Email authentication
+2. Authentication → URL Configuration:
+   Site URL: https://your-username.github.io/AI_Project
+   Redirect URLs: same URL (required for password reset)
+3. Copy Project URL and Anon Key from API Settings → add to app.js
+```
+
+### 3 — Deploy to GitHub Pages
 
 ```bash
-# 1. Clone the repository
 git clone https://github.com/dawoodnadeem9914/AI_Project.git
-
-# 2. Navigate to the project directory
 cd AI_Project
 
-# 3. Install dependencies
-pip install -r requirements.txt
+# Create init.js for local dev (DO NOT commit — it is in .gitignore)
+# Add your Cloudflare Worker URL to this file for local testing
 
-# 4. Run the application
-python main.py
+git push origin main
+
+# Enable GitHub Pages:
+# Repo Settings → Pages → Source: Deploy from main branch
+# App goes live at: https://your-username.github.io/AI_Project
 ```
 
 ---
 
-## 💻 Usage
+## 🌐 Browser Compatibility
 
-Once you run `python main.py`, the AI interviewer will guide you through the session:
+| Browser | Voice Input | AI Voice | Notes |
+|---|:---:|:---:|---|
+| **Chrome (Desktop)** | ✅ Live transcript | ✅ ElevenLabs | **Best experience — recommended** |
+| **Edge (Desktop)** | ✅ Live transcript | ✅ ElevenLabs | Fully supported |
+| **Chrome (Android)** | ✅ Live transcript | ✅ ElevenLabs | Fully supported on mobile |
+| **Safari (Mac)** | ✅ Live transcript | ✅ ElevenLabs | Needs one tap to unlock audio |
+| **Safari (iPhone)** | ⚠️ Record → Whisper | ✅ ElevenLabs | No live text — transcribes after tap |
+| **Firefox** | ❌ Not supported | ✅ ElevenLabs | Web Speech API unavailable |
 
-```
-========================================
-    AI MOCK INTERVIEW COACH
-    Your Personal Interview Trainer
-========================================
-
-Welcome! Let's prepare you for your next interview.
-
-Q1: Tell me about yourself and your background in software engineering.
-
-> [Your answer here]
-
-📊 Evaluating your response...
-
-Score: 7.5 / 10
-✅ Strong introduction and clear communication
-💡 Suggestion: Include a specific achievement or measurable result
-    to make your answer more impactful.
-
-Continue to next question? [y/n]: y
-...
-```
+> **iPhone note:** iOS Safari blocks microphone and audio until user interaction.
+> The app shows a "Tap to enable voice" overlay on iPhone to handle this.
 
 ---
 
-## 📁 Project Structure
+## 👥 Project Team
 
-```
-AI_Project/
-│
-├── main.py                  # Application entry point
-├── requirements.txt         # Python dependencies
-├── README.md                # Project documentation
-│
-├── interviewer/
-│   ├── question_engine.py   # AI question generation logic
-│   ├── evaluator.py         # Response scoring & analysis
-│   └── feedback.py          # Personalised suggestion engine
-│
-└── utils/
-    ├── display.py           # CLI formatting & output
-    └── session.py           # Interview session management
-```
+**CCS3600 Artificial Intelligence — Universiti Putra Malaysia (UPM)**
+**Semester 2, 2025/2026**
 
-> *Note: Structure reflects intended architecture — file names may vary in current implementation.*
+| Name | Matric No. | Role |
+|---|---|---|
+| **Dawood Nadeem** | 226920 | Lead Developer |
+| Fawzia Moradi | 226553 | Team Member |
+| Nur Imanina Zafirah binti Kamaruzzaman | 228135 | Team Member |
+| Nurul Izzah Binti Muhammad K.Y.Tiang | 228044 | Team Member |
+
+**Supervisor:** Dr. Hazlina Binti Hamdan
 
 ---
 
-## 🔮 Future Improvements
-
-- [ ] 🌐 Web interface (Flask / React frontend)
-- [ ] 🎙️ Voice input support for realistic interview simulation
-- [ ] 📄 Resume parsing to generate role-specific questions
-- [ ] 🏷️ Role-specific question banks (SWE, Data Science, Product Management)
-- [ ] 📈 Progress tracking across multiple sessions
-- [ ] 🌍 Multi-language support (Bahasa Malaysia, Mandarin)
-- [ ] ☁️ Cloud deployment (free tier on Render/Railway)
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Here's how to get started:
-
-```bash
-# Fork the repo, then:
-git checkout -b feature/your-feature-name
-git commit -m "feat: add your feature description"
-git push origin feature/your-feature-name
-# Open a Pull Request
-```
-
----
-
-## 👨‍💻 Author
+## 📬 Contact
 
 **Dawood Nadeem**  
 BSc Computer Science @ University Putra Malaysia (UPM)  
 📧 [Captaindawood12@gmail.com](mailto:Captaindawood12@gmail.com)  
-🔗 [LinkedIn](https://linkedin.com/in/dawood-nadeem) · [GitHub](https://github.com/dawoodnadeem9914)
+🔗 [GitHub](https://github.com/dawoodnadeem9914)
 
 ---
 
 <div align="center">
 
 *⭐ Star this repo if it helped you — and go ace that interview!*
+
+<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=12,20,30&height=100&section=footer" width="100%"/>
 
 </div>
