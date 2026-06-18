@@ -14,6 +14,7 @@
 [![GitHub Pages](https://img.shields.io/badge/GitHub_Pages-222222?style=for-the-badge&logo=github&logoColor=white)](https://dawoodnadeem9914.github.io/AI_Project)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](LICENSE)
 [![Status](https://img.shields.io/badge/Status-Live-brightgreen?style=for-the-badge)](#)
+[![Release](https://img.shields.io/github/v/release/dawoodnadeem9914/AI_Project?style=for-the-badge&label=AI%20Coach%20Interview&color=00C853)](https://github.com/dawoodnadeem9914/AI_Project/releases)
 
 > **Practice smarter. Get hired faster.**  
 > Your AI interviewer listens to your voice, tracks your progress, and gives you a detailed performance report after every session.
