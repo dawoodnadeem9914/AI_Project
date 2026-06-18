@@ -122,33 +122,54 @@ The app runs **entirely in the browser** — no installation required, no backen
 
 ## 🏗️ System Architecture
 
-```
-┌──────────────────────────────────────────────────────────────┐
-│                      USER BROWSER                            │
-│  index.html (910 lines)  app.js (2620 lines)  style.css     │
-│  Web Speech API · Audio Playback · localStorage (demo cache) │
-└────────────────────────┬─────────────────────────────────────┘
-                         │
-                         ▼
-┌──────────────────────────────────────────────────────────────┐
-│          CLOUDFLARE WORKER — Secure API Proxy                │
-│     Encrypted Secrets: OPENAI_KEY | ELEVENLABS_KEY           │
-├─────────────────┬──────────────────┬────────────────────────┤
-│  Route 1        │  Route 2         │  Route 3               │
-│ /chat/completions│ /audio/transcriptions│ /text-to-speech/  │
-│                 │                  │                        │
-│ OpenAI API      │ OpenAI Whisper   │ ElevenLabs TTS         │
-│ GPT-4o-mini     │ iOS fallback     │ Adam / Bella voice     │
-└─────────────────┴──────────────────┴────────────────────────┘
-                         │  (public anon key — safe by design)
-                         ▼
-┌──────────────────────────────────────────────────────────────┐
-│              SUPABASE — Auth & Database                      │
-│   Registration · Login · Password Reset · Session History    │
-│   Profile · Avatar · Settings · Cross-device Sync           │
-└──────────────────────────────────────────────────────────────┘
-                         │
-              GitHub Pages — https://dawoodnadeem9914.github.io/AI_Project
+```mermaid
+flowchart TD
+    GHP["🌐 GitHub Pages
+    dawoodnadeem9914.github.io/AI_Project"]
+
+    Browser["🖥️ User Browser
+    ─────────────────────────────
+    index.html · app.js · style.css
+    Web Speech API · Audio Playback
+    localStorage (demo cache)"]
+
+    CF["☁️ Cloudflare Worker — Secure API Proxy
+    ─────────────────────────────────────────
+    Encrypted Secrets: OPENAI_KEY · ELEVENLABS_KEY"]
+
+    OpenAI["🤖 OpenAI GPT-4o-mini
+    Interview Conversation
+    Answer Scoring"]
+
+    Whisper["🎙️ OpenAI Whisper
+    Speech-to-Text
+    iOS Safari Fallback"]
+
+    EL["🔊 ElevenLabs Neural TTS
+    AI Interviewer Voice
+    Adam · Bella"]
+
+    SB["🗄️ Supabase
+    ──────────────────────
+    Authentication
+    Session History
+    Profile · Settings
+    Cross-device Sync"]
+
+    GHP --> Browser
+    Browser -->|"API requests (no keys exposed)"| CF
+    CF -->|"Route 1: /chat/completions"| OpenAI
+    CF -->|"Route 2: /audio/transcriptions"| Whisper
+    CF -->|"Route 3: /text-to-speech"| EL
+    Browser -->|"Direct · public anon key · safe by design"| SB
+
+    style Browser fill:#1a1b27,stroke:#6366f1,color:#e2e8f0
+    style CF fill:#1a1b27,stroke:#F38020,color:#e2e8f0
+    style OpenAI fill:#1a1b27,stroke:#412991,color:#e2e8f0
+    style Whisper fill:#1a1b27,stroke:#412991,color:#e2e8f0
+    style EL fill:#1a1b27,stroke:#ffffff,color:#e2e8f0
+    style SB fill:#1a1b27,stroke:#3ECF8E,color:#e2e8f0
+    style GHP fill:#1a1b27,stroke:#F7DF1E,color:#e2e8f0
 ```
 
 ---
