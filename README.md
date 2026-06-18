@@ -191,29 +191,59 @@ AI_Project/
 
 ## 🔄 How It Works
 
-```
-Step 1  User selects industry, experience level, and number of questions
-        ↓
-Step 2  App sends system prompt to GPT-4o-mini via Cloudflare Worker
-        AI begins warmup phase — friendly intro questions to ease the user in
-        ↓
-Step 3  AI response text sent to ElevenLabs → Natural voice audio plays through speaker
-        ↓
-Step 4  Microphone activates:
-        Desktop / Android  → Web Speech API transcribes live, words appear in real-time
-        iPhone Safari      → MediaRecorder records audio → sent to Whisper after mic tap
-        ↓
-Step 5  Transcribed answer + full conversation history sent to GPT-4o-mini
-        AI acknowledges the answer and asks the next question
-        ↓
-Step 6  Cycle repeats through Transition → Technical phases
-        ↓
-Step 7  All questions and answers sent to GPT-4o-mini with detailed scoring rubric
-        Returns JSON: overall score, 4 category scores, strengths, weaknesses,
-        3 improvement tips, per-answer feedback
-        ↓
-Step 8  Session metadata saved to Supabase
-        Results shown: animated score ring, category bars, answer breakdown
+```mermaid
+flowchart LR
+    A["1️⃣ Setup
+    Choose industry,
+    level & questions"] -->
+    B["2️⃣ AI Greeting
+    GPT-4o-mini starts
+    warmup phase"]
+
+    B --> C["3️⃣ AI Speaks
+    ElevenLabs TTS
+    plays response"]
+
+    C --> D{"4️⃣ Voice Input
+    Desktop/Android?"}
+
+    D -->|"✅ Chrome/Edge"| E["Web Speech API
+    Live transcript
+    on screen"]
+    D -->|"📱 iPhone"| F["MediaRecorder
+    → Whisper API
+    transcription"]
+
+    E --> G["5️⃣ Answer sent
+    to GPT-4o-mini
+    with full history"]
+    F --> G
+
+    G --> H{"More questions?"}
+    H -->|"Yes"| C
+    H -->|"No"| I["6️⃣ Scoring
+    Full interview sent
+    to GPT-4o-mini"]
+
+    I --> J["7️⃣ JSON Report
+    Score · Categories
+    Tips · Breakdown"]
+
+    J --> K["8️⃣ Results Page
+    Animated rings
+    Saved to Supabase"]
+
+    style A fill:#1a1b27,stroke:#6366f1,color:#e2e8f0
+    style B fill:#1a1b27,stroke:#412991,color:#e2e8f0
+    style C fill:#1a1b27,stroke:#000000,color:#e2e8f0
+    style D fill:#1a1b27,stroke:#F7DF1E,color:#e2e8f0
+    style E fill:#1a1b27,stroke:#4285F4,color:#e2e8f0
+    style F fill:#1a1b27,stroke:#412991,color:#e2e8f0
+    style G fill:#1a1b27,stroke:#412991,color:#e2e8f0
+    style H fill:#1a1b27,stroke:#F38020,color:#e2e8f0
+    style I fill:#1a1b27,stroke:#412991,color:#e2e8f0
+    style J fill:#1a1b27,stroke:#00C853,color:#e2e8f0
+    style K fill:#1a1b27,stroke:#3ECF8E,color:#e2e8f0
 ```
 
 **Scoring rubric evaluates:** Answer length · Content quality · Use of examples · STAR method · Filler word count
